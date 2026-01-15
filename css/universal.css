@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Oswald:wght@200..700&display=swap');
+
+:root
+{
+    --color-primary: #6C4DFF;
+    --color-secondary: #00E5FF;
+    --color-background: #0B0F2B;
+    --font-color: #ffffff;
+    --font-default: 'Inter', sans-serif;
+    --font-title: 'Oswald', sans-serif;
+    --color-primary-button: #242fc7;
+    --color-primary-button-hover: #6C4DFF;
+}
+
+body {
+    overflow-x: hidden;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-default);
+    min-height: 1000vh;
+    background-color:rgb(20, 0, 87) ;
+    color: var(--font-color);
+}
+
+.title{
+    font-family: var(--font-title);
+}
+
+.no-copy {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Standard syntax */
+}
+
