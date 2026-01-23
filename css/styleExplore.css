@@ -1,0 +1,71 @@
+.review-container{
+    display: flex;
+}
+
+
+.layout{
+    display: flex;
+}
+
+.content {
+    margin-left: 80px;
+    padding: 20px;
+    width: calc(100% - 80px);
+    transition: margin-left 0.4s ease;
+    display: flex;
+    flex-direction: column; 
+}
+
+.review-container {
+    display: flex;
+    width: 100%;
+}
+
+.review-card {
+    width: 180px;
+    height: 280px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    background-image:url("https://aervhwynaxjyzqeiijca.supabase.co/storage/v1/object/public/images/A%20Silent%20Voice.png");
+    background-color: #cccccc;
+    background-size: 100%;
+}
+
+
+.rating{
+    color: #ffff00;
+    margin-top: auto;
+    font-size: 20px;
+    margin-left: 10px;
+    z-index: 1;
+}
+
+.content-card{
+    width: 180px;
+    height: 280px;
+    background: #000000;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(9, 9, 121, 0.25) 69%, rgba(2, 0, 36, 0.47) 100%);
+    display: flex;
+}
+
+.darken-card{
+    position: absolute;
+    width: 180px;
+    height: 280px;
+    background: #000000;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(9, 9, 121, 0.32) 69%, rgba(2, 0, 36, 0.5) 100%);
+    opacity: 0;
+    
+}
+
+.review-card:hover .darken-card{
+    opacity: 1;
+
+    transition: all 0.3s ease-in-out;
+}
+
+.review-card:hover{
+    background-size: 110% ;
+    transition: all 0.3s ease;
+}

@@ -6,9 +6,16 @@
      <link rel="stylesheet" href="css/universal.css">
      <link rel="stylesheet" href="css/styleIndex.css">
      <link rel="stylesheet" href="css/homepage_section.css">
+    <link rel="stylesheet" href="css/nav.css">
+
  </head>
 
  <body>
+    
+<div class="rotate-warning">
+        Putar perangkat anda untuk melanjutkan
+        <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2k5azR4ZHVoaDQ2emJ4Y3JqanRkZHZic2lucGwyc2FxdDl2bW9taCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/1DtYcLp3GDlY2RsVXd/giphy.gif" alt="" width="250px" height="250px">
+    </div>
      <div>
          <nav class="mainnavbar">
              <div class="logo">
@@ -92,8 +99,8 @@
                      <div class="textcontent">
                          <h1 class="title">RATINGKU</h1>
                          <p class="sub-title" id="sub-title"></p>
-                         <div class="create-review-button" onclick="location.href='createReview.php'" id="create-button">
-                             <span>Buat Rating</span>
+                         <div class="create-review-button" onclick="location.href='explore.php'" id="create-button">
+                             <span>Explore</span>
                              <img src="img/right-arrow.png" width="10px" height="10px">
                          </div>
                      </div>
@@ -195,7 +202,7 @@
         <button class="nav-btn prev-btn" id="prevBtn">❮</button>
         <button class="nav-btn next-btn" id="nextBtn">❯</button>
     </div>
-</section>
+</section>  
 
 
      <section class="best-movies" id="section-film">
