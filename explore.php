@@ -84,11 +84,17 @@
             <div class="sidebars"></div>
             
             <div class="content">
-                <div class="review-container">
+                <div class="review-container no-copy">
                     <div class="review-card">
                         <div class="content-card">
+                            
                             <div class="darken-card"></div>
                             <h1 class="rating">5/5 ★★★★★</h1>
+                            <p class="deskripsi">A heartwarming tale of redemption and friendship, "Silent Voice" follows </p>
+                            <h2 class="judul">Silent Voice</h2>   
+                            <div class="open">
+                                <button class="button-open">Lihat</button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -5,7 +5,7 @@
 
 .layout{
     display: flex;
-}
+} 
 
 .content {
     margin-left: 80px;
@@ -24,48 +24,148 @@
 .review-card {
     width: 180px;
     height: 280px;
-    background-size: cover;
-    background-position: center;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    cursor:default;
+    transition: all 0.3s ease-in-out;
+}
+
+.review-card:hover{
+    transform: scale(1.05);
+    transition: all 0.3s ease-in-out;
+}
+
+.review-card::before{
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 280px;
     border-radius: 12px;
     background-image:url("https://aervhwynaxjyzqeiijca.supabase.co/storage/v1/object/public/images/A%20Silent%20Voice.png");
     background-color: #cccccc;
-    background-size: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.review-card:hover::before{
+    transform: scale(1.05);
+    filter: brightness(0.7);
+    filter: blur(3px);
 }
 
 
 .rating{
     color: #ffff00;
-    margin-top: auto;
     font-size: 20px;
-    margin-left: 10px;
     z-index: 1;
+    transform: translateX(-150px);
+    transition: all 0.2s ease-in-out;
+    padding-left:10px ;
+    filter: blur(2px);
+}
+
+.review-card:hover .rating{
+    transform: translateX(0px);
+    transition: all 0.5s ease-in-out;
+    filter: blur(0px);
 }
 
 .content-card{
     width: 180px;
     height: 280px;
     background: #000000;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(9, 9, 121, 0.25) 69%, rgba(2, 0, 36, 0.47) 100%);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(10, 0, 36, 0.45) 100%);
     display: flex;
+    flex-direction: column;
 }
 
 .darken-card{
     position: absolute;
     width: 180px;
     height: 280px;
-    background: #000000;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(9, 9, 121, 0.32) 69%, rgba(2, 0, 36, 0.5) 100%);
+    background: #541c5c;
+background: linear-gradient(180deg, rgba(84, 28, 92, 0.19) 0%, rgba(10, 0, 36, 0.71) 100%);
     opacity: 0;
+    transition: all 0.2s ease-in-out;
     
 }
 
 .review-card:hover .darken-card{
     opacity: 1;
-
-    transition: all 0.3s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
-.review-card:hover{
-    background-size: 110% ;
+
+.judul{
+    color: #ffffff;
+    font-size: 18px;
+    z-index: 2;
+    margin-top: auto;
+    padding-left: 10px;
+    text-shadow: 0px 0px 4px #000000;
+    padding: 10px;
+    background-color: #3b005795;
+    backdrop-filter: blur(5px);
+    transition: all 0.25s ease-in-out;
+}
+
+.review-card:hover .judul{
+    transform: translateX(200px) ;
+    transition: all 0.35s ease-in-out;
+
+}
+
+
+.deskripsi{
+    color: #ffffff;
+    font-size: 14px;
+    margin-top: 50px;
+    z-index: 1;
+    padding: 10px;
+    opacity: 0;
+    transform: translateY(200px);
+    transition: all 0.2s ease-in-out;
+    filter: blur(2px);
+
+}
+
+.review-card:hover .deskripsi{
+    transform: translateY(0px);
+    opacity: 1;
+    transition: all 0.2s ease-in-out;
+    filter: blur(0px);
+
+}
+
+.open{
+    color: #ffffff;
+    font-size: 18px;
+    z-index: 1;
+    margin-top: auto;
+    padding-left: 10px;
+    text-shadow: 0px 0px 4px #000000;
+    padding: 10px;
+    background-color: #3b005795;
+    backdrop-filter: blur(5px);
+    transition: all 0.25s ease-in-out;
+    transform: translateY(-7.2vh) translateX(-220px);
+    width: 110%;
+}
+
+.review-card:hover .open{
+    transform: translateY(-7.2vh) translateX(0px);
+}
+
+.button-open{
+    width: 40%;
+    height: 100%;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
     transition: all 0.3s ease;
+    cursor: pointer;
 }

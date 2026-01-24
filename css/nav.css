@@ -2,7 +2,7 @@
 .mainnavbar{
     box-shadow: 10px 0 20px 20px rgba(11, 15, 43, 0.84);
     position: fixed;
-    z-index: 100;
+    z-index: 999;
     flex-direction: row;
     display: flex;
     gap: 20px;
@@ -135,7 +135,7 @@
 }
 /* ===== SIDEBAR DASAR ===== */
 .sidebar {
-    z-index: 1;
+    z-index: 998;
     position: fixed;
     top: 0;
     left: 0;
