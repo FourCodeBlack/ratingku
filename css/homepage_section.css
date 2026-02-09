@@ -327,6 +327,12 @@ box-shadow: 0px 23px 41px 15px #0B0F2B;
   mask-image: linear-gradient(90deg,rgba(84, 28, 92, 1) 41%, rgba(10, 0, 36, 0) 100%);
 }
 
+section{
+  scroll-margin-top: 20vh;
+}
+
+
+
 /* container scroll */
 .movie-slider {
   display: flex;

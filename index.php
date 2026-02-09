@@ -8,6 +8,7 @@
      <link rel="stylesheet" href="css/homepage_section.css">
      <link rel="stylesheet" href="css/nav.css">
      <link rel="stylesheet" href="css/footer.css">
+     <link rel="stylesheet" href="css/modalLogin.css">
 
      <!-- Font Awesome -->
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -121,15 +122,15 @@
                  </div>
 
                  <div class="section-move">
-                     <button class="web-information" onclick="location.href='#section-film'">
+                     <button class="web-information" onclick="location.href='#info-slider'" id="button-section-info">
                          <img class="web-information-image" src="img/star.png" width="15px" height="15px">
                          <span class="span-web-information">Web Information</span>
                      </button>
-                     <button class="best-film">
+                     <button class="best-film"  onclick="location.href='#section-film'" id="button-section-film">
                          <img class="best-film-image" src="img/star.png" width="15px" height="15px">
                          <span class="-span-best-film">Best Film</span>
                      </button>
-                     <button class="best-anime shine-effect" style="--duration: 0.2">
+                     <button class="best-anime shine-effect" style="--duration: 0.2"  onclick="location.href='#section-anime'" id="button-section-anime">
                          <img class="best-anime-image" src="img/star.png" width="15px" height="15px">
                          <span class="-span-best-anime">Best Anime</span>
                      </button>
@@ -153,7 +154,7 @@
      </div>
 
 
-     <section class="info-slider">
+     <section class="info-slider" id="info-slider">
          <h2>Informasi Website</h2>
 
          <!-- Progress Bar -->
@@ -347,7 +348,9 @@
      </div>
 
      <!-- Custom JavaScript -->
-     <script src="footer.js"></script>
+     <script src="js/footer.js"></script>
+
+     <script src="js/makeLogin.js"></script>
 
  </body>
 

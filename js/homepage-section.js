@@ -7,6 +7,17 @@ const sliders = document.querySelector(".movie-slider");
 const slidertrackanime = document.getElementById("animesliderTrack")
 const slidersanime = document.querySelector(".anime-slider");
 
+document.getElementById("button-section-info").addEventListener("click", function() {
+  document.getElementById("info-slider").scrollIntoView({ behavior: "smooth", block: "center" });
+});
+
+document.getElementById("button-section-film").addEventListener("click", function() {
+  document.getElementById("section-film").scrollIntoView({ behavior: "smooth" });
+});
+
+document.getElementById("button-section-anime").addEventListener("click", function() {
+  document.getElementById("section-anime").scrollIntoView({ behavior: "smooth" });
+});
 
 function horizontalScroll(container) {
   container.addEventListener("wheel", (e) => {
