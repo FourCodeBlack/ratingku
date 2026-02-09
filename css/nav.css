@@ -15,6 +15,8 @@
     overflow: hidden;
     font-family: var(--font-default);
     margin-bottom: 20px;
+    background: rgba(11, 15, 43, 0.708);
+    backdrop-filter: blur(14px);
 }
 .mainnavbar .logo{
     left: 20px;
