@@ -1,37 +1,67 @@
-const SUPABASE_URL = "https://aervhwynaxjyzqeiijca.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFlcnZod3luYXhqeXpxZWlpamNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNTAxNTcsImV4cCI6MjA4MzkyNjE1N30.iV8wkRk4_u58kdXyYcaOdN2Pc_8lNP3-1w6oFTo45Ew";
+// ========================================
+// DETAIL PAGE WITH AUTH INTEGRATION
+// ========================================
+import { supabase } from './supabase-client.js';
 
-// Ambil data dari URL parameter
+// Global variables
 const urlParams = new URLSearchParams(window.location.search);
 const contentId = urlParams.get('id');
+let currentUser = null;
+let currentUserRating = null;
+let isEditMode = false;
 
-// Load content detail
-async function loadContentDetail() {
-    if (!contentId) {
-        window.location.href = 'explore.php';
+// ========================================
+// INIT: CHECK AUTH & LOAD CONTENT
+// ========================================
+
+async function init() {
+    // 1. Check authentication
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+        // User not logged in - redirect to home with login modal
+        alert('Silakan login terlebih dahulu untuk melihat detail konten.');
+        window.location.href = 'index.html?openLogin=true';
         return;
     }
+    
+    currentUser = session.user;
+    
+    // 2. Load content detail
+    if (!contentId) {
+        alert('Content ID tidak ditemukan');
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    await loadContentDetail();
+    await displayUserInfo();
+    await loadRatings();
+    await checkUserRating();
+    
+    // 3. Setup event listeners
+    setupEventListeners();
+}
 
+// ========================================
+// LOAD CONTENT DETAIL
+// ========================================
+
+async function loadContentDetail() {
     try {
-        const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/content?id=eq.${contentId}&select=*,images(image_url)`,
-            {
-                headers: {
-                    apikey: SUPABASE_KEY,
-                    Authorization: `Bearer ${SUPABASE_KEY}`
-                }
-            }
-        );
-
-        const data = await response.json();
+        const { data, error } = await supabase
+            .from('content')
+            .select('*, images(image_url)')
+            .eq('id', contentId)
+            .single();
         
-        if (data.length > 0) {
-            const content = data[0];
-            displayContent(content);
-            loadRatings(contentId);
+        if (error) throw error;
+        
+        if (data) {
+            displayContent(data);
         } else {
             alert('Konten tidak ditemukan');
-            window.location.href = 'explore.php`';
+            window.location.href = 'index.html';
         }
     } catch (error) {
         console.error('Error loading content:', error);
@@ -39,7 +69,6 @@ async function loadContentDetail() {
     }
 }
 
-// Display content
 function displayContent(content) {
     const imageUrl = content.images && content.images.length > 0 
         ? content.images[0].image_url 
@@ -60,70 +89,465 @@ function displayContent(content) {
     document.getElementById('contentType').textContent = content.type || "Unknown";
 }
 
-// Load ratings
-async function loadRatings(contentId) {
-    try {
-        const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/ratings?content_id=eq.${contentId}`,
-            {
-                headers: {
-                    apikey: SUPABASE_KEY,
-                    Authorization: `Bearer ${SUPABASE_KEY}`
-                }
-            }
-        );
+// ========================================
+// DISPLAY USER INFO
+// ========================================
 
-        const ratings = await response.json();
+async function displayUserInfo() {
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    
+    // Get display name from email
+    const displayName = currentUser.email.split('@')[0];
+    const initial = displayName.charAt(0).toUpperCase();
+    
+    userAvatar.textContent = initial;
+    userName.textContent = displayName;
+}
+
+// ========================================
+// CHECK USER RATING (EXISTING REVIEW)
+// ========================================
+
+async function checkUserRating() {
+    try {
+        const { data, error } = await supabase
+            .from('rating')
+            .select('*')
+            .eq('content_id', contentId)
+            .eq('user_id', currentUser.id)
+            .maybeSingle(); // ✅ PENTING!
         
-        if (ratings.length > 0) {
-            const average = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
+        if (error) throw error;
+        
+        if (data) {
+            currentUserRating = data;
+            displayExistingRating(data);
+        } else {
+            currentUserRating = null;
+            document.getElementById('userHint').textContent = 'Berikan penilaian Anda';
+        }
+    } catch (error) {
+        console.error('Error checking user rating:', error);
+        currentUserRating = null;
+    }
+}
+function displayExistingRating(rating) {
+    // Check the appropriate star
+    document.getElementById(`star${rating.rating}`).checked = true;
+    
+    // Show review text if exists
+    if (rating.review) {
+        document.getElementById('userReview').value = rating.review;
+        document.getElementById('charCount').textContent = rating.review.length;
+        document.getElementById('reviewInputSection').style.display = 'block';
+    }
+    
+    // Update button text
+    document.getElementById('submitRating').innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Update Rating
+    `;
+    
+    document.getElementById('userHint').textContent = 'Edit penilaian Anda';
+    document.getElementById('cancelRating').style.display = 'block';
+    isEditMode = true;
+}
+
+// ========================================
+// LOAD ALL RATINGS
+// ========================================
+async function loadRatings() {
+    try {
+        const { data, error } = await supabase
+            .from('rating')
+            .select(`
+                *,
+                users:user_id(email)
+            `)
+            .eq('content_id', contentId)
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        console.log('Ratings data:', data); // Debug - cek di console
+        
+        // Calculate average rating and display
+        if (data && data.length > 0) {
+            const average = data.reduce((sum, r) => sum + r.rating, 0) / data.length;
             document.querySelector('.rating-number').textContent = average.toFixed(1);
-            document.getElementById('totalRatings').textContent = `${ratings.length} ratings`;
+            document.getElementById('totalRatings').textContent = `${data.length} rating${data.length > 1 ? 's' : ''}`;
+            document.getElementById('reviewCount').textContent = `${data.length} review${data.length > 1 ? 's' : ''}`;
+            
+            displayReviews(data);
+        } else {
+            document.querySelector('.rating-number').textContent = '0.0';
+            document.getElementById('totalRatings').textContent = '0 ratings';
+            document.getElementById('reviewCount').textContent = '0 reviews';
+            displayNoReviews();
         }
     } catch (error) {
         console.error('Error loading ratings:', error);
+        displayNoReviews();
     }
 }
+function displayReviews(ratings) {
+    const reviewsList = document.getElementById('reviewsList');
+    
+    if (!ratings || ratings.length === 0) {
+        displayNoReviews();
+        return;
+    }
+    
+    reviewsList.innerHTML = ratings.map(rating => {
+        // ✅ Akses dari relasi users
+        const email = rating.users?.email || 'Unknown User';
+        const displayName = email.split('@')[0];
+        const initial = displayName.charAt(0).toUpperCase();
+        const date = formatDate(rating.created_at);
+        const isOwnReview = rating.users_id === currentUser.id;
+        
+        const stars = Array.from({ length: 5 }, (_, i) => {
+            const filled = i < rating.rating;
+            return `<span class="star ${filled ? '' : 'empty'}">★</span>`;
+        }).join('');
+        
+        return `
+            <div class="review-card ${isOwnReview ? 'own-review' : ''}">
+                <div class="review-header">
+                    <div class="review-user-section">
+                        <div class="review-avatar">${initial}</div>
+                        <div class="review-user-info">
+                            <div class="review-user-name">
+                                ${escapeHtml(displayName)}
+                                ${isOwnReview ? '<span class="you-badge">YOU</span>' : ''}
+                            </div>
+                            <div class="review-date">${date}</div>
+                        </div>
+                    </div>
+                    ${isOwnReview ? `
+                        <div class="review-actions">
+                            <button class="btn-edit" onclick="editReview(${rating.id}, ${rating.rating}, '${escapeHtml(rating.review || '')}')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Edit
+                            </button>
+                            <button class="btn-delete" onclick="deleteReview(${rating.id})">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Hapus
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="review-rating">${stars}</div>
+                ${rating.review ? `<div class="review-content">${escapeHtml(rating.review)}</div>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+function displayNoReviews() {
+    const reviewsList = document.getElementById('reviewsList');
+    reviewsList.innerHTML = `
+        <div class="no-reviews">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p>Belum ada review</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem; color: #666;">Jadilah yang pertama memberikan review!</p>
+        </div>
+    `;
+}
 
-// Submit rating
-document.getElementById('submitRating').addEventListener('click', async () => {
+// ========================================
+// EVENT LISTENERS
+// ========================================
+
+function setupEventListeners() {
+    // Star rating click - show review input
+    document.querySelectorAll('input[name="rating"]').forEach(input => {
+        input.addEventListener('change', () => {
+            document.getElementById('reviewInputSection').style.display = 'block';
+        });
+    });
+    
+    // Character counter
+    const reviewTextarea = document.getElementById('userReview');
+    reviewTextarea.addEventListener('input', () => {
+        const length = reviewTextarea.value.length;
+        document.getElementById('charCount').textContent = length;
+        
+        const charCountContainer = document.querySelector('.character-count');
+        if (length >= 500) {
+            charCountContainer.classList.add('limit-reached');
+        } else {
+            charCountContainer.classList.remove('limit-reached');
+        }
+    });
+    
+    // Submit rating
+    document.getElementById('submitRating').addEventListener('click', handleSubmitRating);
+    
+    // Cancel button
+    document.getElementById('cancelRating').addEventListener('click', handleCancel);
+    
+    // Edit modal
+    document.querySelector('.close-edit').addEventListener('click', closeEditModal);
+    document.getElementById('cancelEdit').addEventListener('click', closeEditModal);
+    document.getElementById('saveEditRating').addEventListener('click', handleSaveEdit);
+    
+    // Edit review character counter
+    const editReviewTextarea = document.getElementById('editReviewText');
+    editReviewTextarea.addEventListener('input', () => {
+        const length = editReviewTextarea.value.length;
+        document.getElementById('editCharCount').textContent = length;
+    });
+    
+    // Close modal on outside click
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('editReviewModal');
+        if (e.target === modal) {
+            closeEditModal();
+        }
+    });
+}
+
+// ========================================
+// SUBMIT RATING (CREATE OR UPDATE)
+// ========================================
+
+async function handleSubmitRating() {
     const selectedRating = document.querySelector('input[name="rating"]:checked');
+    const reviewText = document.getElementById('userReview').value.trim();
+    const submitBtn = document.getElementById('submitRating');
     
     if (!selectedRating) {
         showMessage('Pilih rating terlebih dahulu!', 'error');
         return;
     }
-
+    
     try {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/ratings`, {
-            method: 'POST',
-            headers: {
-                apikey: SUPABASE_KEY,
-                Authorization: `Bearer ${SUPABASE_KEY}`,
-                'Content-Type': 'application/json',
-                'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify({
-                content_id: parseInt(contentId),
-                rating: parseInt(selectedRating.value)
-            })
-        });
-
-        if (response.ok) {
-            showMessage('Rating berhasil dikirim!', 'success');
-            setTimeout(() => {
-                loadRatings(contentId);
-                // Reset rating
-                document.querySelectorAll('input[name="rating"]').forEach(r => r.checked = false);
-            }, 1500);
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Loading...';
+        
+        const ratingData = {
+            user_id: currentUser.id,
+            content_id: parseInt(contentId),
+            rating: parseInt(selectedRating.value),
+            review: reviewText || null
+        };
+        
+        console.log('Submitting rating:', ratingData);
+        
+        let result;
+        
+        if (isEditMode && currentUserRating) {
+            // UPDATE existing rating
+            result = await supabase
+                .from('rating')
+                .update({
+                    rating: ratingData.rating,
+                    review: ratingData.review
+                })
+                .eq('id', currentUserRating.id)
+                .eq('user_id', currentUser.id)
+                .select();
+                
+            console.log('Update result:', result);
         } else {
-            showMessage('Gagal mengirim rating', 'error');
+            // INSERT new rating
+            result = await supabase
+                .from('rating')
+                .insert([ratingData])
+                .select();
+                
+            console.log('Insert result:', result);
         }
+        
+        if (result.error) {
+            console.error('Supabase error details:', result.error);
+            throw result.error;
+        }
+        
+        showMessage(isEditMode ? 'Rating berhasil diupdate!' : 'Rating berhasil dikirim!', 'success');
+        
+        // ✅ PERBAIKAN: Reload data dan update UI
+        setTimeout(async () => {
+            await loadRatings();
+            await checkUserRating();
+            
+            // ✅ TAMBAHKAN: Reset message setelah reload
+            setTimeout(() => {
+                document.getElementById('ratingMessage').className = 'rating-message';
+            }, 100);
+        }, 1500);
+        
     } catch (error) {
         console.error('Error submitting rating:', error);
-        showMessage('Terjadi kesalahan', 'error');
+        console.error('Error details:', JSON.stringify(error, null, 2));
+        
+        if (error.code === '23505') {
+            showMessage('Anda sudah memberikan rating untuk konten ini!', 'error');
+        } else {
+            showMessage('Gagal mengirim rating: ' + (error.message || 'Unknown error'), 'error');
+        }
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = isEditMode ? `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Update Rating
+        ` : `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Kirim Rating
+        `;
     }
-});
+}
+// ========================================
+// CANCEL EDIT
+// ========================================
+
+function handleCancel() {
+    // Reset form
+    document.querySelectorAll('input[name="rating"]').forEach(r => r.checked = false);
+    document.getElementById('userReview').value = '';
+    document.getElementById('charCount').textContent = '0';
+    document.getElementById('reviewInputSection').style.display = 'none';
+    document.getElementById('cancelRating').style.display = 'none';
+    
+    // Reset button
+    document.getElementById('submitRating').innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Kirim Rating
+    `;
+    
+    document.getElementById('userHint').textContent = 'Berikan penilaian Anda';
+    isEditMode = false;
+    
+    // Reload current rating if exists
+    if (currentUserRating) {
+        displayExistingRating(currentUserRating);
+    }
+}
+
+// ========================================
+// EDIT REVIEW (MODAL)
+// ========================================
+
+window.editReview = function(ratingId, rating, review) {
+    const modal = document.getElementById('editReviewModal');
+    
+    // Set current values
+    document.getElementById(`editStar${rating}`).checked = true;
+    document.getElementById('editReviewText').value = review;
+    document.getElementById('editCharCount').textContent = review.length;
+    
+    // Store rating ID for save
+    modal.dataset.ratingId = ratingId;
+    
+    // Show modal
+    modal.style.display = 'flex';
+};
+
+async function handleSaveEdit() {
+    const modal = document.getElementById('editReviewModal');
+    const ratingId = modal.dataset.ratingId;
+    const selectedRating = document.querySelector('input[name="editRating"]:checked');
+    const reviewText = document.getElementById('editReviewText').value.trim();
+    const saveBtn = document.getElementById('saveEditRating');
+    
+    if (!selectedRating) {
+        showEditMessage('Pilih rating terlebih dahulu!', 'error');
+        return;
+    }
+    
+    try {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Loading...';
+        
+        const { error } = await supabase
+            .from('rating')
+            .update({
+                rating: parseInt(selectedRating.value),
+                review: reviewText || null
+            })
+            .eq('id', ratingId)
+            .eq('user_id', currentUser.id); // Security check
+        
+        if (error) throw error;
+        
+        showEditMessage('Rating berhasil diupdate!', 'success');
+        
+        setTimeout(async () => {
+            closeEditModal();
+            await loadRatings();
+            await checkUserRating();
+        }, 1500);
+        
+    } catch (error) {
+        console.error('Error updating rating:', error);
+        showEditMessage('Gagal update rating: ' + error.message, 'error');
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Simpan';
+    }
+}
+
+function closeEditModal() {
+    document.getElementById('editReviewModal').style.display = 'none';
+    document.getElementById('editMessage').className = 'edit-message';
+}
+
+// ========================================
+// DELETE REVIEW
+// ========================================
+
+window.deleteReview = async function(ratingId) {
+    if (!confirm('Apakah Anda yakin ingin menghapus review ini?')) {
+        return;
+    }
+    
+    try {
+        const { error } = await supabase
+            .from('rating')
+            .delete()
+            .eq('id', ratingId)
+            .eq('user_id', currentUser.id); // Security: ensure user owns this rating
+        
+        if (error) throw error;
+        
+        showMessage('Review berhasil dihapus!', 'success');
+        
+        setTimeout(async () => {
+            currentUserRating = null;
+            isEditMode = false;
+            await loadRatings();
+            await checkUserRating();
+            handleCancel();
+            document.getElementById('ratingMessage').className = 'rating-message';
+        }, 1500);
+        
+    } catch (error) {
+        console.error('Error deleting rating:', error);
+        showMessage('Gagal menghapus review: ' + error.message, 'error');
+    }
+};
+
+// ========================================
+// HELPER FUNCTIONS
+// ========================================
 
 function showMessage(message, type) {
     const messageEl = document.getElementById('ratingMessage');
@@ -135,9 +559,70 @@ function showMessage(message, type) {
     }, 3000);
 }
 
+function showEditMessage(message, type) {
+    const messageEl = document.getElementById('editMessage');
+    messageEl.textContent = message;
+    messageEl.className = `edit-message ${type}`;
+    
+    setTimeout(() => {
+        messageEl.className = 'edit-message';
+    }, 3000);
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+        const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+        if (diffHours === 0) {
+            const diffMinutes = Math.floor(diffTime / (1000 * 60));
+            return diffMinutes <= 1 ? 'Baru saja' : `${diffMinutes} menit yang lalu`;
+        }
+        return diffHours === 1 ? '1 jam yang lalu' : `${diffHours} jam yang lalu`;
+    } else if (diffDays === 1) {
+        return 'Kemarin';
+    } else if (diffDays < 7) {
+        return `${diffDays} hari yang lalu`;
+    } else if (diffDays < 30) {
+        const weeks = Math.floor(diffDays / 7);
+        return weeks === 1 ? '1 minggu yang lalu' : `${weeks} minggu yang lalu`;
+    } else if (diffDays < 365) {
+        const months = Math.floor(diffDays / 30);
+        return months === 1 ? '1 bulan yang lalu' : `${months} bulan yang lalu`;
+    } else {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('id-ID', options);
+    }
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
+}
+
 function goBack() {
     window.history.back();
 }
 
-// Load content on page load
-loadContentDetail();
+// ========================================
+// INITIALIZE ON PAGE LOAD
+// ========================================
+
+document.addEventListener('DOMContentLoaded', init);
+
+// Listen for auth changes
+supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') {
+        window.location.href = 'index.html';
+    }
+});

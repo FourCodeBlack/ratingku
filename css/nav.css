@@ -64,7 +64,9 @@
 
 .mainnavbar ul .login {
     height: 40px; 
-    width: 70px;
+    width: fit-content;
+    padding: 10px;
+    white-space: nowrap;
     border: none;
     cursor: pointer;
     font-size: medium;

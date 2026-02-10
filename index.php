@@ -39,8 +39,8 @@
                  <li class=" kategori"><a href="">Categories</a></li>
                  <li><a href="search.php">Search</a></li>
                  <button class="login"> Login </button>
-                  <script type="module" src="js/supabase-client.js"></script>
-    <script type="module" src="js/makeLogin.js"></script>
+                 <script type="module" src="js/supabase-client.js"></script>
+                 <script type="module" src="js/makeLogin.js"></script>
                  <button class="premium">Premium
                      <img src="img/crown.png" width="15px" height="15px">
                  </button>
@@ -110,47 +110,70 @@
 
 
              <section class="content-container" id="hero-section">
+                 <div class="content-container-child">
 
-                 <div class="content">
-                     <div class="textcontent">
-                         <h1 class="title">RATINGKU</h1>
-                         <p class="sub-title" id="sub-title"></p>
-                         <div class="create-review-button" onclick="location.href='explore.php'" id="create-button">
-                             <span>Explore</span>
-                             <img src="img/right-arrow.png" width="10px" height="10px">
+                     <!-- TEXT -->
+                     <div class="content">
+                         <div class="textcontent">
+                             <h1 class="title">RATINGKU</h1>
+                             <p class="sub-title">
+                                 Temukan film & anime terbaik berdasarkan rating komunitas
+                             </p>
+
+                             <div class="create-review-button" onclick="location.href='explore.php'">
+                                 <span>Explore</span>
+                                 <img src="img/right-arrow.png" width="10">
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- IMAGE SLIDER -->
+                     <div class="horizontal-slider">
+                         <div class="slider-track">
+                             <img src="img/slide1.jpg">
+                             <img src="img/slide2.jpg">
+                             <img src="img/slide3.jpg">
+                             <img src="img/slide4.jpg">
+                             <img src="img/slide5.jpg">
+
+                             <!-- duplikat untuk loop halus -->
+                             <img src="img/slide1.jpg">
+                             <img src="img/slide2.jpg">
+                             <img src="img/slide3.jpg">
                          </div>
                      </div>
 
                  </div>
 
-                 <div class="section-move">
-                     <button class="web-information" onclick="location.href='#info-slider'" id="button-section-info">
-                         <img class="web-information-image" src="img/star.png" width="15px" height="15px">
-                         <span class="span-web-information">Web Information</span>
-                     </button>
-                     <button class="best-film"  onclick="location.href='#section-film'" id="button-section-film">
-                         <img class="best-film-image" src="img/star.png" width="15px" height="15px">
-                         <span class="-span-best-film">Best Film</span>
-                     </button>
-                     <button class="best-anime shine-effect" style="--duration: 0.2"  onclick="location.href='#section-anime'" id="button-section-anime">
-                         <img class="best-anime-image" src="img/star.png" width="15px" height="15px">
-                         <span class="-span-best-anime">Best Anime</span>
-                     </button>
-                 </div>
-             </section>
 
          </div>
 
-
-         <div class="container-music-slider">
-             <link rel="stylesheet" href="css/homepage_section.css">
-             <div class="music-element-wrapper">
-                 <img class="music-element auto-rotate" src="https://aervhwynaxjyzqeiijca.supabase.co/storage/v1/object/public/element/record-4572383_640.png" />
-             </div>
-             <div class="running-text">
-                 <div class="text-list"></div>
-             </div>
+         <div class="section-move">
+             <button class="web-information" onclick="location.href='#info-slider'" id="button-section-info">
+                 <img class="web-information-image" src="img/star.png" width="15px" height="15px">
+                 <span class="span-web-information">Web Information</span>
+             </button>
+             <button class="best-film" onclick="location.href='#section-film'" id="button-section-film">
+                 <img class="best-film-image" src="img/star.png" width="15px" height="15px">
+                 <span class="-span-best-film">Best Film</span>
+             </button>
+             <button class="best-anime shine-effect" style="--duration: 0.2" onclick="location.href='#section-anime'" id="button-section-anime">
+                 <img class="best-anime-image" src="img/star.png" width="15px" height="15px">
+                 <span class="-span-best-anime">Best Anime</span>
+             </button>
          </div>
+         </section>
+
+     </div>
+
+
+     <div class="container-music-slider">
+         <link rel="stylesheet" href="css/homepage_section.css">
+    
+         <div class="running-text">
+             <div class="text-list"></div>
+         </div>
+     </div>
 
 
      </div>

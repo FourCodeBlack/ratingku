@@ -1,51 +1,132 @@
-
-
-.content-container{
+.content-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    flex: 10;
-}
-.content {
-    display: flex;
-    flex-direction: row;
-    color: black;
-    border-radius: 20px;
-    justify-content: center-left;
-    padding:50px;
-    flex: 6;
+    gap: 40px;
     width: 100%;
-    max-width: 1100px;
-    min-height: 300px;
-    background-color: rgba(167, 167, 167, 0.38);
-    backdrop-filter: blur(40px);
-    margin-right: 60%;
-    filter: drop-shadow(0px 0px 10px rgba(167, 167, 167, 0.38));
 }
 
-.content .textcontent{
+/* WRAPPER */
+.content-container-child {
     display: flex;
-    width: auto;
-    flex:3;
-    flex-direction: column;
-    justify-content: center-left;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 80px;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px;
 }
-.content .textcontent h1{
-    width: auto;
+
+/* CONTENT KIRI */
+.content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 50px;
+    min-height: 320px;
+    border-radius: 24px;
+    backdrop-filter: blur(40px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.textcontent {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.textcontent h1 {
     font-family: var(--font-title);
     font-size: 56px;
     color: var(--color-prmary-button-color);
+    margin: 0;
 }
-.content .textcontent  p{
-    width: auto;
+
+.textcontent p {
     font-family: var(--font-default);
     font-size: 20px;
     color: #0B0E2C;
-    margin-top: -20px;
-    margin-bottom: 20px;
+    margin: 0 0 20px;
 }
+
+/* SLIDER KANAN */
+.horizontal-slider {
+    flex: 1;
+    max-width: 560px;
+    height: 320px;
+    overflow: hidden;
+    border-radius: 22px;
+    position: relative;
+}
+
+.slider-track {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    animation: slideHorizontal 25s linear infinite;
+}
+
+.slider-track img {
+    width: 220px;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    transition: transform 0.4s ease;
+}
+
+.slider-track img:hover {
+    transform: scale(1.06);
+}
+
+/* GRADIENT TEPI */
+.horizontal-slider::before,
+.horizontal-slider::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 70px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.horizontal-slider::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(30,10,80,1), transparent);
+}
+
+.horizontal-slider::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(30,10,80,1), transparent);
+}
+
+/* ANIMASI */
+@keyframes slideHorizontal {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .content-container-child {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .horizontal-slider {
+        width: 100%;
+        max-width: 100%;
+        height: 260px;
+    }
+
+    .slider-track img {
+        width: 180px;
+        height: 260px;
+    }
+}
+
+
 
 .create-review-button {
     display: flex;
@@ -170,7 +251,8 @@ mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
 }
 
 .running-text {
-    position: absolute;
+    margin-top: aut;
+    position: relative;
     background: #000000;
     mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(9, 9, 121, 1) 70%, rgba(2, 0, 36, 1) 100%);
     z-index: -1;
