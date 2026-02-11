@@ -40,7 +40,6 @@
                 <li class=" kategori"><a href="">Categories</a></li>
                 <li><a href="search.php">Search</a></li>
                 <button class="login"> Login </button>
-                <script type="module" src="js/supabase-client.js"></script>
                 <script type="module" src="js/makeLogin.js"></script>
                 <button class="premium">Premium
                     <img src="img/crown.png" width="15px" height="15px">
@@ -379,7 +378,7 @@
     <!-- Custom JavaScript -->
     <script src="js/footer.js"></script>
 
-    <script src="js/makeLogin.js"></script>
+    <script type="module"src="js/makeLogin.js" defer></script>
 
 </body>
 

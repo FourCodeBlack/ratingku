@@ -21,7 +21,7 @@ async function init() {
     if (!session) {
         // User not logged in - redirect to home with login modal
         alert('Silakan login terlebih dahulu untuk melihat detail konten.');
-        window.location.href = 'index.html?openLogin=true';
+        window.location.href = 'explore.php';
         return;
     }
     
@@ -30,7 +30,7 @@ async function init() {
     // 2. Load content detail
     if (!contentId) {
         alert('Content ID tidak ditemukan');
-        window.location.href = 'index.html';
+        window.location.href = 'explore.php';
         return;
     }
     

@@ -1,11 +1,71 @@
 // ========================================
 // LOGIN & REGISTER MODAL SYSTEM
 // ========================================
-import { supabase } from './supabase-client.js';
+import { supabase, initSupabase } from './supabase-client.js';
 import msgBox from './component/alert.js';
 
 const loginModal = `
-<link rel="stylesheet" href="modalLogin.css">
+<style>
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.close-login {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.close-login:hover {
+  color: #000;
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.google-btn {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.google-btn:hover {
+  background-color: #f5f5f5;
+}
+</style>
 
 <div id="loginModal" class="modal">
   <div class="modal-content">
@@ -20,17 +80,37 @@ const loginModal = `
 `;
 
 // ========================================
+// GLOBAL STATE
+// ========================================
+let authStateListener = null;
+let isSupabaseReady = false;
+
+// ========================================
 // INJECT MODALS KE BODY
 // ========================================
 
 function initModals() {
     const body = document.querySelector("body");
-    
-    // Inject modal ke body
     body.insertAdjacentHTML("beforeend", loginModal);
-    
-    // Setup event listeners
     setupModalEvents();
+}
+
+// ========================================
+// WAIT FOR SUPABASE READY
+// ========================================
+
+async function ensureSupabaseReady() {
+    if (isSupabaseReady) return true;
+    
+    try {
+        await initSupabase();
+        isSupabaseReady = true;
+        console.log('✅ Supabase client ready');
+        return true;
+    } catch (error) {
+        console.error('Failed to initialize Supabase:', error);
+        return false;
+    }
 }
 
 // ========================================
@@ -39,14 +119,22 @@ function initModals() {
 
 async function checkAuthState() {
     try {
-        const { data: { session } } = await supabase.auth.getSession();
+        console.log('🔍 Checking auth state...');
         
-        if (session) {
-            // User is logged in
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+            console.error('Session error:', error);
+            updateUIForLoggedOutUser();
+            return;
+        }
+        
+        if (session && session.user) {
+            console.log('✅ User logged in:', session.user.email);
             await loadUserProfile(session.user.id);
             updateUIForLoggedInUser(session.user);
         } else {
-            // User is not logged in
+            console.log('❌ No active session');
             updateUIForLoggedOutUser();
         }
     } catch (error) {
@@ -55,7 +143,10 @@ async function checkAuthState() {
     }
 }
 
-// Load user profile from profiles table
+// ========================================
+// LOAD USER PROFILE
+// ========================================
+
 async function loadUserProfile(userId) {
     try {
         const { data, error } = await supabase
@@ -64,23 +155,30 @@ async function loadUserProfile(userId) {
             .eq('id', userId)
             .single();
         
-        if (error) {
+        if (error && error.code !== 'PGRST116') {
             console.error('Error loading profile:', error);
             return;
         }
         
         if (data) {
+            console.log('✅ Profile loaded:', data.username);
             if (data.username) {
                 localStorage.setItem('username', data.username);
             }
             if (data.pp) {
                 localStorage.setItem('userPP', data.pp);
             }
+        } else {
+            console.log('⚠️ No profile found');
         }
     } catch (error) {
         console.error('Error loading profile:', error);
     }
 }
+
+// ========================================
+// UPDATE UI
+// ========================================
 
 function updateUIForLoggedInUser(user) {
     const loginBtn = document.querySelector(".login");
@@ -89,38 +187,36 @@ function updateUIForLoggedInUser(user) {
         return;
     }
 
-    // Ambil username untuk fallback
+    console.log('🔄 Updating UI for logged in user');
+
     const username = localStorage.getItem('username') ||
                     user.user_metadata?.full_name ||
                     user.user_metadata?.name ||
                     user.email?.split('@')[0] ||
                     'User';
 
-    // Ambil PP dari localStorage atau gunakan default
     const userPP = localStorage.getItem('userPP') || 
                    user.user_metadata?.avatar_url || 
                    user.user_metadata?.picture || 
                    `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=4f46e5&color=fff&size=128`;
 
-    // Ganti button text dengan image PP
     loginBtn.innerHTML = `<img src="${userPP}" alt="Profile" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid #fff;">`;
     loginBtn.style.cursor = 'pointer';
     loginBtn.style.padding = '0';
     loginBtn.style.background = 'transparent';
     loginBtn.style.border = 'none';
     
-    // Remove old event listener dan tambah yang baru
     const newLoginBtn = loginBtn.cloneNode(true);
     loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
     
     newLoginBtn.onclick = function(e) {
         e.preventDefault();
-        // Langsung panggil logout dengan konfirmasi
         showLogoutMenu();
     };
+    
+    console.log('✅ UI updated - User logged in');
 }
 
-// Update UI untuk user yang belum login
 function updateUIForLoggedOutUser() {
     const loginBtn = document.querySelector(".login");
     if (!loginBtn) {
@@ -128,26 +224,28 @@ function updateUIForLoggedOutUser() {
         return;
     }
     
+    console.log('🔄 Updating UI for logged out user');
+    
     loginBtn.textContent = "Login";
     loginBtn.style.cursor = 'pointer';
+    loginBtn.style.padding = '';
+    loginBtn.style.background = '';
+    loginBtn.style.border = '';
     
-    // Remove old event listener
     const newLoginBtn = loginBtn.cloneNode(true);
     loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
     
-    newLoginBtn.onclick = async function(e) {
+    newLoginBtn.onclick = function(e) {
         e.preventDefault();
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-            const loginModalEl = document.getElementById("loginModal");
-            if (loginModalEl) {
-                loginModalEl.style.display = "flex";
-            }
+        const loginModalEl = document.getElementById("loginModal");
+        if (loginModalEl) {
+            loginModalEl.style.display = "flex";
         }
     };
+    
+    console.log('✅ UI updated - User logged out');
 }
 
-// Show logout menu
 function showLogoutMenu() {
     if (confirm('Apakah Anda ingin logout?')) {
         handleLogout();
@@ -159,35 +257,29 @@ function showLogoutMenu() {
 // ========================================
 
 function setupModalEvents() {
-    // Get modal elements
     const loginModalEl = document.getElementById("loginModal");
-    
-    // Get buttons
     const closeLoginBtn = document.querySelector(".close-login");
     const googleLoginBtn = document.getElementById("loginGoogle");
     
-    // ===== CLOSE MODALS =====
     if (closeLoginBtn) {
         closeLoginBtn.addEventListener("click", () => {
             loginModalEl.style.display = "none";
         });
     }
     
-    // Close when clicking outside modal
     window.addEventListener("click", (e) => {
         if (e.target === loginModalEl) {
             loginModalEl.style.display = "none";
         }
     });
     
-    // ===== GOOGLE LOGIN =====
     if (googleLoginBtn) {
         googleLoginBtn.addEventListener("click", handleGoogleLogin);
     }
 }
 
 // ========================================
-// GOOGLE LOGIN HANDLER
+// GOOGLE LOGIN
 // ========================================
 
 async function handleGoogleLogin() {
@@ -195,19 +287,21 @@ async function handleGoogleLogin() {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin
+                redirectTo: window.location.origin,
+                queryParams: {
+                    access_type: 'offline',
+                    prompt: 'consent',
+                }
             }
         });
 
         if (error) throw error;
         
-        // Gunakan msgBox yang sudah diimport
         if (typeof msgBox !== 'undefined') {
             msgBox.info('Mengalihkan ke Google...');
         }
         
     } catch (error) {
-        // Gunakan msgBox yang sudah diimport
         if (typeof msgBox !== 'undefined') {
             msgBox.error('Gagal login dengan Google.');
         }
@@ -221,6 +315,8 @@ async function handleGoogleLogin() {
 
 async function ensureUserProfile(user) {
     try {
+        console.log('🔍 Checking profile for:', user.email);
+        
         const { data, error: selectError } = await supabase
             .from('profiles')
             .select('id')
@@ -228,12 +324,13 @@ async function ensureUserProfile(user) {
             .single();
 
         if (selectError && selectError.code !== 'PGRST116') {
-            // PGRST116 = row not found, yang berarti kita perlu insert
             console.error('Error checking profile:', selectError);
             return;
         }
 
         if (!data) {
+            console.log('📝 Creating new profile');
+            
             const username = user.user_metadata?.full_name || 
                             user.user_metadata?.name || 
                             user.email?.split('@')[0] || 
@@ -252,16 +349,22 @@ async function ensureUserProfile(user) {
             ]);
 
             if (insertError) {
-                console.error('Error inserting profile:', insertError);
+                console.error('Error creating profile:', insertError);
+            } else {
+                console.log('✅ Profile created');
+                localStorage.setItem('username', username);
+                if (pp) localStorage.setItem('userPP', pp);
             }
+        } else {
+            console.log('✅ Profile exists');
         }
     } catch (error) {
-        console.error('Error ensuring user profile:', error);
+        console.error('Error ensuring profile:', error);
     }
 }
 
 // ========================================
-// LOGOUT HANDLER
+// LOGOUT
 // ========================================
 
 async function handleLogout() {
@@ -269,11 +372,9 @@ async function handleLogout() {
         const { error } = await supabase.auth.signOut();
         
         if (!error) {
-            // Clear localStorage
             localStorage.removeItem('username');
             localStorage.removeItem('userPP');
             
-            // Gunakan msgBox yang sudah diimport
             if (typeof msgBox !== 'undefined') {
                 msgBox.success('Berhasil logout.');
             }
@@ -287,9 +388,8 @@ async function handleLogout() {
     } catch (error) {
         console.error('Logout error:', error);
         
-        // Gunakan msgBox yang sudah diimport
         if (typeof msgBox !== 'undefined') {
-            msgBox.error('Gagal logout. Silakan coba lagi.');
+            msgBox.error('Gagal logout.');
         }
     }
 }
@@ -298,39 +398,73 @@ async function handleLogout() {
 // INITIALIZE
 // ========================================
 
-// Flag untuk tracking apakah ini initial load atau bukan
-let isInitialLoad = true;
-
-document.addEventListener("DOMContentLoaded", async () => {
-    // Initialize modals first
+async function initialize() {
+    console.log('🚀 Starting auth initialization...');
+    
+    // 1. Initialize modals
     initModals();
     
-    // Then check auth state
+    // 2. Wait for Supabase to be fully ready
+    const ready = await ensureSupabaseReady();
+    if (!ready) {
+        console.error('❌ Failed to initialize Supabase');
+        updateUIForLoggedOutUser();
+        return;
+    }
+    
+    // 3. Check current auth state
     await checkAuthState();
     
-    // Set flag setelah initial load selesai
-    setTimeout(() => {
-        isInitialLoad = false;
-    }, 1000);
-    
-    // Listen untuk perubahan auth state
-    supabase.auth.onAuthStateChange(async (event, session) => {
-        
-        if (event === 'SIGNED_IN' && session) {
-            // Hanya tampilkan pesan sukses jika bukan initial load
-            // (artinya ini adalah login yang baru saja terjadi)
-            if (!isInitialLoad && typeof msgBox !== 'undefined') {
-                msgBox.success('Login berhasil!');
-            }
+    // 4. Setup auth state listener (only once)
+    if (!authStateListener) {
+        authStateListener = supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log('🔔 Auth event:', event);
             
-            await ensureUserProfile(session.user);
-            await loadUserProfile(session.user.id);
-            updateUIForLoggedInUser(session.user);
-        } else if (event === 'SIGNED_OUT') {
-            updateUIForLoggedOutUser();
-        }
-    });
+            if (event === 'SIGNED_IN' && session) {
+                console.log('✅ Sign in detected');
+                await ensureUserProfile(session.user);
+                await loadUserProfile(session.user.id);
+                updateUIForLoggedInUser(session.user);
+                
+                // Show success message (only for new logins, not initial page load)
+                if (typeof msgBox !== 'undefined' && event === 'SIGNED_IN') {
+                    msgBox.success('Login berhasil!');
+                }
+                
+                // Clean URL if has OAuth params
+                const url = new URL(window.location);
+                if (url.hash.includes('access_token') || url.search.includes('code')) {
+                    window.history.replaceState({}, document.title, url.pathname);
+                }
+            } else if (event === 'SIGNED_OUT') {
+                console.log('👋 Sign out detected');
+                updateUIForLoggedOutUser();
+            } else if (event === 'TOKEN_REFRESHED') {
+                console.log('🔄 Token refreshed');
+            }
+        });
+    }
+    
+    console.log('✅ Auth system ready');
+}
+
+// ========================================
+// START
+// ========================================
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize);
+} else {
+    // DOM already loaded
+    initialize();
+}
+
+// Cleanup
+window.addEventListener('beforeunload', () => {
+    if (authStateListener) {
+        authStateListener.subscription.unsubscribe();
+    }
 });
 
-// Export functions if needed
+// Export
 export { checkAuthState, updateUIForLoggedInUser, updateUIForLoggedOutUser };
