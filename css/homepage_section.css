@@ -193,17 +193,6 @@ box-shadow: 0px 23px 41px 15px #0B0F2B;
     }
 }
 
-.section-move {
-  display: flex;
-  justify-content: center; /* Memastikan isi button di dalamnya juga rata tengah */
-  gap: 20px; 
-  height: 50px;
-  width: max-content; /* Pastikan lebar sesuai isi agar bisa ditengah */
-  margin: 0 auto;  
-     /* Rahasia agar elemen blok berada di tengah */
-  position: relative;
-  top: 20px; 
-}
 
 .web-information {
   cursor: pointer;

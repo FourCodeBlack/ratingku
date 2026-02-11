@@ -1,20 +1,22 @@
 .content-container {
+    position: relative;
   display: flex;
   flex-direction: column;
   gap: 40px;
   width: 100%;
-  height: 80vh;
+  margin-bottom: 50px;
 }
 
 /* WRAPPER */
 .content-container-child {
+    position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 80px;
   width: 100%;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 0 auto 100px auto;
   padding: 10px 40px 0 40px;
 }
 
@@ -26,7 +28,7 @@
   padding: 50px;
   min-height: 320px;
   border-radius: 24px;
-  backdrop-filter: blur(40px);
+  backdrop-filter: blur(100px);
 }
 
 .textcontent {
@@ -36,16 +38,27 @@
 }
 
 .textcontent h1 {
+
+    letter-spacing: 0.6;
   font-family: var(--font-title);
-  font-size: 56px;
-  color: var(--color-prmary-button-color);
+  font-size: 86px;
+  /* 1. Tentukan warna gradient */
+  background: linear-gradient(90deg, #bbddff, #60a5fa,#3b82f6);
+  
+  /* 2. Potong background agar mengikuti bentuk teks */
+  -webkit-background-clip: text;
+  background-clip: text;
+  
+  /* 3. Buat warna teks asli menjadi transparan */
+  -webkit-text-fill-color: transparent;
+  color: transparent; /* Fallback */
   margin: 0;
 }
 
 .textcontent p {
   font-family: var(--font-default);
-  font-size: 20px;
-  color: #0b0e2c;
+  font-size: 30px;
+  color: #005698;
   margin: 0 0 20px;
 }
 
@@ -57,6 +70,52 @@
   overflow: hidden;
   border-radius: 22px;
   position: relative;
+}
+
+.section-move {
+  display: flex;
+  justify-content: center; /* Memastikan isi button di dalamnya juga rata tengah */
+  gap: 20px; 
+  height: 50px;
+  width: max-content; /* Pastikan lebar sesuai isi agar bisa ditengah */
+  margin: 0 auto;  
+     /* Rahasia agar elemen blok berada di tengah */
+  position: relative;
+  top: 20px; 
+}
+
+.move-text{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+      gap: 20px;
+    font-size: 18px;
+    color: #ffffff;
+    font-family: var(--font-default);
+height: fit-content;
+    margin: 0 auto;
+}
+.move-text p{
+  margin-top: 20px;
+    margin: 0;
+    font-style: 800;
+        font-size: 20px;
+      font-family: 'Segoe UI', sans-serif;
+    color:#a5d4fd;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.move-text h1{
+    font-size: 34px;
+    font-family: 'Segoe UI', sans-serif;
+    color:#a5d4fd;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .slider-track {

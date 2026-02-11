@@ -35,7 +35,7 @@
                 <h1 class="title shine-effect">RATINGKU</h1>
             </div>
             <ul>
-                <li><a href="#hero-section">Profile</a></li>
+                <li><a href="profile.php">Profile</a></li>
                 <li><a href="myReview.php">Your Review</a></li>
                 <li class=" kategori"><a href="">Categories</a></li>
                 <li><a href="search.php">Search</a></li>
@@ -115,7 +115,7 @@
                     <!-- TEXT -->
                     <div class="content">
                         <div class="textcontent">
-                            <h1 class="title">RATINGKU</h1>
+                            <h1 class="title">Rate Your Favorite Content</h1>
                             <p class="sub-title">
                                 Temukan film & anime terbaik berdasarkan rating komunitas
                             </p>
@@ -149,11 +149,11 @@
                     <p>Jelajahi Ratingku dengan 1 klik!!!</p>
                 </div>
                 <div class="section-move">
-                    <button class="web-information" onclick="location.href='#info-slider'" id="button-section-info">
+                    <button class="best-anime shine-effect" style="--duration: 0.2" onclick="location.href='#info-slider'" id="button-section-info">
                         <img class="web-information-image" src="img/star.png" width="15px" height="15px">
                         <span class="span-web-information">Web Information</span>
                     </button>
-                    <button class="best-film" onclick="location.href='#section-film'" id="button-section-film">
+                    <button class="best-anime shine-effect" style="--duration: 0.2" onclick="location.href='#section-film'" id="button-section-film">
                         <img class="best-film-image" src="img/star.png" width="15px" height="15px">
                         <span class="-span-best-film">Best Film</span>
                     </button>
@@ -163,14 +163,7 @@
                         <span class="-span-best-anime">Best Anime</span>
                     </button>
                 </div>
-
-        </div>
-
-
-        </section>
-
-    </div>
-<div class="container-cards">
+  <div class="container-cards">
         <!-- Card Kiri - Informasi Web -->
         <div class="card card-left">
             <div>
@@ -256,6 +249,12 @@
         </div>
     </div>
 
+            </section>
+        </div>
+
+
+    </div>
+ 
     <div class="container-music-slider">
         <link rel="stylesheet" href="css/homepage_section.css">
 

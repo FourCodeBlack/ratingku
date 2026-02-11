@@ -1,6 +1,6 @@
 
 .mainnavbar{
-    box-shadow: 10px 0 20px 20px rgba(11, 15, 43, 0.84);
+    box-shadow: transparent;
     position: fixed;
     z-index: 999;
     flex-direction: row;
@@ -15,7 +15,6 @@
     overflow: hidden;
     font-family: var(--font-default);
     margin-bottom: 20px;
-    background: rgba(11, 15, 43, 0.708);
     backdrop-filter: blur(14px);
 }
 .mainnavbar .logo{
@@ -149,9 +148,8 @@
     display: flex;
     justify-content: space-between;
     padding:100px 10px 20px 20px;
-    background: rgba(11, 15, 43, 0.84);
+    background:transparent;
     backdrop-filter: blur(14px);
-    border-right: 1px solid rgba(83, 76, 76, 0.597);
     transition: width .4s ease;
     overflow: hidden;
 }
