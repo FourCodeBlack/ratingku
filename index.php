@@ -144,6 +144,10 @@
                     </div>
 
                 </div>
+                <div class="move-text">
+                    <h1>Anda mau kemana?</h1>
+                    <p>Jelajahi Ratingku dengan 1 klik!!!</p>
+                </div>
                 <div class="section-move">
                     <button class="web-information" onclick="location.href='#info-slider'" id="button-section-info">
                         <img class="web-information-image" src="img/star.png" width="15px" height="15px">
@@ -166,7 +170,91 @@
         </section>
 
     </div>
+<div class="container-cards">
+        <!-- Card Kiri - Informasi Web -->
+        <div class="card card-left">
+            <div>
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="icon">⭐</span>
+                        Tentang Platform
+                    </h2>
+                    <p class="card-subtitle">Sistem rating dan review terpercaya</p>
+                    <span class="badge">Verified Platform</span>
+                </div>
 
+                <ul class="info-list">
+                    <li class="info-item">
+                        <span class="bullet"></span>
+                        Rating berbasis komunitas yang fair dan transparan
+                    </li>
+                    <li class="info-item">
+                        <span class="bullet"></span>
+                        Verifikasi otomatis untuk mencegah spam
+                    </li>
+                    <li class="info-item">
+                        <span class="bullet"></span>
+                        Analitik mendalam untuk setiap review
+                    </li>
+                    <li class="info-item">
+                        <span class="bullet"></span>
+                        Update real-time dan notifikasi instant
+                    </li>
+                </ul>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-value">15K+</span>
+                        <p class="stat-label">Total Reviews</p>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-value">4.8</span>
+                        <p class="stat-label">Avg Rating</p>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#profile" class="btn-profile">
+                Lihat Profile Lengkap
+                <span class="arrow">→</span>
+            </a>
+        </div>
+
+        <!-- Card Kanan - Fitur & Profile -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span class="icon">🚀</span>
+                    Fitur Unggulan
+                </h2>
+                <p class="card-subtitle">Kemudahan yang kami tawarkan</p>
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <strong>Smart Filtering</strong><br>
+                    Filter review berdasarkan kategori, rating, dan tanggal dengan algoritma cerdas
+                </div>
+                <div class="feature-item">
+                    <strong>AI-Powered Insights</strong><br>
+                    Analisis sentimen otomatis dan rekomendasi berbasis machine learning
+                </div>
+                <div class="feature-item">
+                    <strong>Multi-Platform Sync</strong><br>
+                    Sinkronisasi data across device dengan cloud storage terintegrasi
+                </div>
+                <div class="feature-item">
+                    <strong>Advanced Security</strong><br>
+                    Enkripsi end-to-end dan perlindungan data privasi pengguna
+                </div>
+            </div>
+
+            <a href="#dashboard" class="btn-profile">
+                Akses Dashboard
+                <span class="arrow">→</span>
+            </a>
+        </div>
+    </div>
 
     <div class="container-music-slider">
         <link rel="stylesheet" href="css/homepage_section.css">
@@ -378,7 +466,7 @@
     <!-- Custom JavaScript -->
     <script src="js/footer.js"></script>
 
-    <script type="module"src="js/makeLogin.js" defer></script>
+    <script type="module" src="js/makeLogin.js" defer></script>
 
 </body>
 

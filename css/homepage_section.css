@@ -199,7 +199,8 @@ box-shadow: 0px 23px 41px 15px #0B0F2B;
   gap: 20px; 
   height: 50px;
   width: max-content; /* Pastikan lebar sesuai isi agar bisa ditengah */
-  margin: 0 auto;     /* Rahasia agar elemen blok berada di tengah */
+  margin: 0 auto;  
+     /* Rahasia agar elemen blok berada di tengah */
   position: relative;
   top: 20px; 
 }

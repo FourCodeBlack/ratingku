@@ -1,293 +1,285 @@
-// // profile.js
-// import { 
-//     supabase, 
-//     getCurrentUser, 
-//     getUserProfile, 
-//     getUserRatings, 
-//     updateUserProfile,
-//     signOut 
-// } from './supabase-client.js';
+// ========================================
+// PROFILE PAGE - USER RATINGS
+// ========================================
+import { supabase } from './supabase-client.js';
 
-// let currentUser = null;
-// let currentProfile = null;
-// let currentRatings = [];
+const PP_BASE_URL = 'https://aervhwynaxjyzqeiijca.supabase.co/storage/v1/object/public/photoprofile/';
+const DEFAULT_PP = 'pp.webp';
 
-// // Initialize profile page
-// async function initProfile() {
-//     showLoading();
+// ========================================
+// BACK NAVIGATION
+// ========================================
+function setupBackButton() {
+    const backButton = document.getElementById('backButton');
     
-//     // Check if user is logged in
-//     currentUser = await getCurrentUser();
-    
-//     if (!currentUser) {
-//         showLoginPrompt();
-//         return;
-//     }
-    
-//     // Load user data
-//     await loadUserData();
-// }
-
-// // Show loading state
-// function showLoading() {
-//     const container = document.getElementById('mainContainer');
-//     container.innerHTML = `
-//         <div class="profile-card">
-//             <div class="loading">Loading your profile...</div>
-//         </div>
-//     `;
-// }
-
-// // Show login prompt
-// function showLoginPrompt() {
-//     const container = document.getElementById('mainContainer');
-//     container.innerHTML = `
-//         <div class="profile-card">
-//             <div class="login-prompt">
-//                 <h2>Please Login to View Your Profile</h2>
-//                 <p style="color: white; margin-bottom: 20px;">You need to be logged in to access this page.</p>
-//                 <a href="login.html" class="btn">Go to Login</a>
-//             </div>
-//         </div>
-//     `;
-// }
-
-// // Load user data
-// async function loadUserData() {
-//     try {
-//         // Get profile
-//         currentProfile = await getUserProfile(currentUser.id);
+    backButton.addEventListener('click', () => {
+        // Ambil referrer dari sessionStorage atau URL parameter
+        const referrer = sessionStorage.getItem('profileReferrer') || 
+                        new URLSearchParams(window.location.search).get('from') ||
+                        document.referrer;
         
-//         // Get ratings
-//         currentRatings = await getUserRatings(currentUser.id);
-        
-//         // Render profile
-//         renderProfile();
-        
-//         // Render ratings
-//         renderRatings();
-        
-//     } catch (error) {
-//         showError('Failed to load user data');
-//         console.error(error);
-//     }
-// }
+        // Cek dari mana user datang
+        if (referrer) {
+            if (referrer.includes('index.php') || referrer.includes('index.html')) {
+                window.location.href = 'index.php';
+            } else if (referrer.includes('explore.php') || referrer.includes('explore.html')) {
+                window.location.href = 'explore.php';
+            } else if (referrer.includes('myReview.php') || referrer.includes('myReview.html')) {
+                window.location.href = 'myReview.php';
+            } else if (referrer.includes('detail.php') || referrer.includes('detail.html')) {
+                window.location.href = 'detail.php';
+            } else {
+                // Fallback ke history back jika ada
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    window.location.href = 'index.php';
+                }
+            }
+        } else {
+            // Default ke index jika tidak ada referrer
+            window.location.href = 'index.php';
+        }
+    });
+}
 
-// // Render profile section
-// function renderProfile() {
-//     const profileCard = document.getElementById('profileCard');
-    
-//     const totalRatings = currentRatings.length;
-//     const avgRating = totalRatings > 0 
-//         ? (currentRatings.reduce((sum, r) => sum + r.rating, 0) / totalRatings).toFixed(1)
-//         : '0.0';
-//     const totalReviews = currentRatings.filter(r => r.review && r.review.trim() !== '').length;
-    
-//     const memberSince = currentProfile?.created_at 
-//         ? new Date(currentProfile.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
-//         : 'Unknown';
-    
-//     profileCard.innerHTML = `
-//         <div id="viewMode" class="view-mode">
-//             <div class="profile-header">
-//                 <img src="${currentProfile?.pp || 'https://aervhwynaxjyzqeiijca.supabase.co/storage/v1/object/public/photoprofile/pp.webp'}" 
-//                      alt="Profile Picture" 
-//                      class="profile-image"
-//                      id="profileImage">
-//                 <div class="profile-info">
-//                     <h1 id="displayUsername">${currentProfile?.username || 'No username'}</h1>
-//                     <p>${currentUser?.email || ''}</p>
-//                     <p class="member-since">Member since: ${memberSince}</p>
-//                     <button class="btn btn-success" onclick="toggleEditMode()">Edit Profile</button>
-//                     <button class="btn btn-danger" onclick="handleSignOut()">Sign Out</button>
-//                 </div>
-//             </div>
-            
-//             <div class="profile-stats">
-//                 <div class="stat-box">
-//                     <h3>${totalRatings}</h3>
-//                     <p>Total Ratings</p>
-//                 </div>
-//                 <div class="stat-box">
-//                     <h3>${avgRating}</h3>
-//                     <p>Average Rating</p>
-//                 </div>
-//                 <div class="stat-box">
-//                     <h3>${totalReviews}</h3>
-//                     <p>Reviews Written</p>
-//                 </div>
-//             </div>
-//         </div>
+// ========================================
+// GET CURRENT USER
+// ========================================
+async function getCurrentUser() {
+    try {
+        const { data: { session }, error } = await supabase.auth.getSession();
         
-//         <div id="editMode" class="edit-mode">
-//             <h2 style="margin-bottom: 20px; color: #333;">Edit Profile</h2>
-//             <form id="editProfileForm">
-//                 <div class="form-group">
-//                     <label for="editUsername">Username</label>
-//                     <input type="text" 
-//                            id="editUsername" 
-//                            name="username" 
-//                            value="${currentProfile?.username || ''}" 
-//                            required>
-//                 </div>
-                
-//                 <div class="form-group">
-//                     <label for="editPp">Profile Picture URL</label>
-//                     <input type="url" 
-//                            id="editPp" 
-//                            name="pp" 
-//                            value="${currentProfile?.pp || ''}">
-//                 </div>
-                
-//                 <button type="submit" class="btn">Save Changes</button>
-//                 <button type="button" class="btn btn-secondary" onclick="toggleEditMode()">Cancel</button>
-//             </form>
-//         </div>
-//     `;
-    
-//     // Add event listener for form
-//     document.getElementById('editProfileForm').addEventListener('submit', handleUpdateProfile);
-// }
-
-// // Render ratings section
-// function renderRatings() {
-//     const ratingsSection = document.getElementById('ratingsSection');
-    
-//     if (!currentRatings || currentRatings.length === 0) {
-//         ratingsSection.innerHTML = `
-//             <div class="ratings-section">
-//                 <h2>Your Ratings & Reviews</h2>
-//                 <div class="no-ratings">You haven't rated any content yet.</div>
-//             </div>
-//         `;
-//         return;
-//     }
-    
-//     const ratingsHTML = currentRatings.map(rating => {
-//         const stars = '★'.repeat(rating.rating) + '☆'.repeat(5 - rating.rating);
-//         const reviewText = rating.review && rating.review.trim() !== '' 
-//             ? `<p style="margin-top: 10px; color: #555;">"${escapeHtml(rating.review)}"</p>`
-//             : '';
+        if (error) throw error;
         
-//         const createdDate = new Date(rating.created_at).toLocaleDateString('en-US', { 
-//             year: 'numeric', 
-//             month: 'short', 
-//             day: 'numeric' 
-//         });
+        if (!session) {
+            // Redirect to login if not authenticated
+            window.location.href = 'index.php';
+            return null;
+        }
         
-//         return `
-//             <div class="rating-item">
-//                 <h3>${escapeHtml(rating.content?.title || 'Unknown')}</h3>
-//                 <div class="rating-meta">
-//                     <span class="stars">${stars}</span>
-//                     <span>${escapeHtml(rating.content?.type || 'Unknown')}</span>
-//                     <span>${escapeHtml(rating.content?.genre || 'Unknown')}</span>
-//                     <span>${rating.content?.release_year || 'N/A'}</span>
-//                     <span>${createdDate}</span>
-//                 </div>
-//                 ${reviewText}
-//             </div>
-//         `;
-//     }).join('');
-    
-//     ratingsSection.innerHTML = `
-//         <div class="ratings-section">
-//             <h2>Your Ratings & Reviews</h2>
-//             ${ratingsHTML}
-//         </div>
-//     `;
-// }
+        return session.user;
+    } catch (error) {
+        console.error('Error getting current user:', error);
+        return null;
+    }
+}
 
-// // Toggle edit mode
-// window.toggleEditMode = function() {
-//     const viewMode = document.getElementById('viewMode');
-//     const editMode = document.getElementById('editMode');
-    
-//     viewMode.classList.toggle('hidden');
-//     editMode.classList.toggle('active');
-// }
-
-// // Handle profile update
-// async function handleUpdateProfile(e) {
-//     e.preventDefault();
-    
-//     const username = document.getElementById('editUsername').value;
-//     const pp = document.getElementById('editPp').value;
-    
-//     try {
-//         // Show loading
-//         const submitBtn = e.target.querySelector('button[type="submit"]');
-//         submitBtn.disabled = true;
-//         submitBtn.textContent = 'Saving...';
+// ========================================
+// LOAD USER PROFILE
+// ========================================
+async function loadUserProfile(userId) {
+    try {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('username, pp')
+            .eq('id', userId)
+            .single();
         
-//         // Update profile
-//         await updateUserProfile(currentUser.id, {
-//             username: username,
-//             pp: pp || currentProfile.pp
-//         });
+        if (error) throw error;
         
-//         // Reload data
-//         await loadUserData();
+        return data;
+    } catch (error) {
+        console.error('Error loading profile:', error);
+        return null;
+    }
+}
+
+// ========================================
+// LOAD USER RATINGS
+// ========================================
+async function loadUserRatings(userId) {
+    try {
+        const { data, error } = await supabase
+            .from('rating')
+            .select(`
+                id,
+                rating,
+                review,
+                created_at,
+                content:content_id (
+                    id,
+                    title,
+                    type,
+                    images (
+                        image_url,
+                        is_primary
+                    )
+                )
+            `)
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false });
         
-//         // Show success message
-//         showSuccess('Profile updated successfully!');
+        if (error) throw error;
         
-//         // Close edit mode
-//         toggleEditMode();
-        
-//     } catch (error) {
-//         showError('Failed to update profile');
-//         console.error(error);
-//     } finally {
-//         const submitBtn = e.target.querySelector('button[type="submit"]');
-//         submitBtn.disabled = false;
-//         submitBtn.textContent = 'Save Changes';
-//     }
-// }
+        return data || [];
+    } catch (error) {
+        console.error('Error loading ratings:', error);
+        return [];
+    }
+}
 
-// // Handle sign out
-// window.handleSignOut = async function() {
-//     if (confirm('Are you sure you want to sign out?')) {
-//         try {
-//             await signOut();
-//             window.location.href = 'login.html';
-//         } catch (error) {
-//             showError('Failed to sign out');
-//             console.error(error);
-//         }
-//     }
-// }
-
-// // Show success message
-// function showSuccess(message) {
-//     showAlert(message, 'success');
-// }
-
-// // Show error message
-// function showError(message) {
-//     showAlert(message, 'error');
-// }
-
-// // Show alert
-// function showAlert(message, type) {
-//     const alertDiv = document.createElement('div');
-//     alertDiv.className = `alert alert-${type}`;
-//     alertDiv.textContent = message;
+// ========================================
+// FORMAT TIME AGO
+// ========================================
+function timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
     
-//     const container = document.querySelector('.container');
-//     container.insertBefore(alertDiv, container.firstChild);
+    const intervals = {
+        tahun: 31536000,
+        bulan: 2592000,
+        minggu: 604800,
+        hari: 86400,
+        jam: 3600,
+        menit: 60
+    };
     
-//     setTimeout(() => {
-//         alertDiv.remove();
-//     }, 5000);
-// }
+    for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+        const interval = Math.floor(seconds / secondsInUnit);
+        if (interval >= 1) {
+            return `${interval} ${unit} yang lalu`;
+        }
+    }
+    
+    return 'Baru saja';
+}
 
-// // Escape HTML to prevent XSS
-// function escapeHtml(text) {
-//     const div = document.createElement('div');
-//     div.textContent = text;
-//     return div.innerHTML;
-// }
+// ========================================
+// RENDER STARS
+// ========================================
+function renderStars(rating) {
+    let starsHTML = '';
+    for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+            starsHTML += '<span class="star">★</span>';
+        } else {
+            starsHTML += '<span class="star empty">★</span>';
+        }
+    }
+    return starsHTML;
+}
 
-// // Initialize when DOM is loaded
-// document.addEventListener('DOMContentLoaded', initProfile);
+// ========================================
+// GET PRIMARY IMAGE
+// ========================================
+function getPrimaryImage(images) {
+    if (!images || images.length === 0) {
+        return 'img/placeholder.jpg'; // Fallback image
+    }
+    
+    // Cari image yang is_primary = true
+    const primaryImage = images.find(img => img.is_primary);
+    
+    // Jika ada, return URL-nya
+    if (primaryImage) {
+        return primaryImage.image_url;
+    }
+    
+    // Jika tidak ada, return image pertama
+    return images[0].image_url;
+}
+
+// ========================================
+// RENDER RATINGS
+// ========================================
+function renderRatings(ratings, username, userPP) {
+    const container = document.getElementById('ratingsContainer');
+    
+    if (!ratings || ratings.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>Belum Ada Rating</h3>
+                <p>Kamu belum memberikan rating pada konten apapun.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = ratings.map(rating => {
+        const contentTitle = rating.content?.title || 'Unknown';
+        const contentImage = getPrimaryImage(rating.content?.images);
+        const timeAgoText = timeAgo(rating.created_at);
+        
+        return `
+            <div class="rating-card">
+                <div class="rating-content">
+                    <div class="rating-header">
+                        <div class="rating-avatar">
+                            <img src="${userPP}" alt="${username}">
+                        </div>
+                        <div class="rating-user-info">
+                            <h3>${username}</h3>
+                            <span class="rating-time">${timeAgoText}</span>
+                        </div>
+                    </div>
+                    <div class="rating-stars">
+                        ${renderStars(rating.rating)}
+                    </div>
+                    ${rating.review ? `<p class="rating-review">${rating.review}</p>` : ''}
+                </div>
+                <div class="rating-image">
+                    <img src="${contentImage}" alt="${contentTitle}">
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ========================================
+// UPDATE UI WITH USER DATA
+// ========================================
+function updateUI(user, profile) {
+    // Update username
+    const username = profile?.username || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+    document.getElementById('userName').textContent = username;
+    
+    // Update email
+    document.getElementById('userEmail').textContent = user.email;
+    
+    // Update avatar
+    const ppFilename = profile?.pp || DEFAULT_PP;
+    const avatarURL = PP_BASE_URL + ppFilename;
+    document.getElementById('userAvatar').src = avatarURL;
+    
+    return { username, avatarURL };
+}
+
+// ========================================
+// INITIALIZE PAGE
+// ========================================
+async function initPage() {
+    try {
+        // Setup back button
+        setupBackButton();
+        
+        // Get current user
+        const user = await getCurrentUser();
+        if (!user) return;
+        
+        // Load user profile
+        const profile = await loadUserProfile(user.id);
+        
+        // Update UI
+        const { username, avatarURL } = updateUI(user, profile);
+        
+        // Load and render ratings
+        const ratings = await loadUserRatings(user.id);
+        renderRatings(ratings, username, avatarURL);
+        
+    } catch (error) {
+        console.error('Error initializing page:', error);
+        document.getElementById('ratingsContainer').innerHTML = `
+            <div class="empty-state">
+                <h3>Terjadi Kesalahan</h3>
+                <p>Gagal memuat data profil. Silakan refresh halaman.</p>
+            </div>
+        `;
+    }
+}
+
+// ========================================
+// START
+// ========================================
+document.addEventListener('DOMContentLoaded', initPage);
