@@ -239,22 +239,25 @@ async function loadRatings() {
     }
 }
 
-function displayReviews(ratings) {
+async function displayReviews(ratings) {
     const reviewsList = document.getElementById('reviewsList');
     
     if (!ratings || ratings.length === 0) {
         displayNoReviews();
         return;
     }
-    await const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-            `)
+      const { data, error } = await supabase
+            .from("profiles")
+            .select('username, photo_profiles(url)')
+            .eq("id", currentUser.id)
+            .single();
+  
     reviewsList.innerHTML = ratings.map(rating => {
         // ✅ Akses dari relasi users
         const email = rating.users?.username || 'Unknown User';
         const displayName = email.split('@')[0];
-        const initial = displayName.charAt(0).toUpperCase();
+        const initial = data.photo_profiles.url;
+        console.log(data.photo_profiles.url);
 
         const date = formatDate(rating.created_at);
         const isOwnReview = rating.user_id === currentUser.id;
@@ -268,7 +271,12 @@ function displayReviews(ratings) {
             <div class="review-card ${isOwnReview ? 'own-review' : ''}">
                 <div class="review-header">
                     <div class="review-user-section">
-                        <div class="review-avatar">${initial}</div>
+                        <div class="review-avatar" style="
+                                            background-image: url('${initial}');
+                                            background-size: cover;
+                                            background-position: center;
+                                            background-repeat: no-repeat;
+                                            "></div>
                         <div class="review-user-info">
                             <div class="review-user-name">
                                 ${escapeHtml(displayName)}
