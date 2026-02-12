@@ -65,7 +65,7 @@ function escapeHtml(text) {
 // CONSTANTS
 // ========================================
 
-const SEMENTARAIMG = "https://i.pinimg.com/originals/f3/d0/19/f3d019284cfaaf4d093941ecb0a3ea40.gif";
+const SEMENTARAIMG = "banner.png";
 const SUPABASE_URL = "https://aervhwynaxjyzqeiijca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFlcnZod3luYXhqeXpxZWlpamNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNTAxNTcsImV4cCI6MjA4MzkyNjE1N30.iV8wkRk4_u58kdXyYcaOdN2Pc_8lNP3-1w6oFTo45Ew";
 
@@ -78,6 +78,263 @@ const state = {
     isInitialized: false,
     isFetching: false
 };
+
+// ========================================
+// TOP RATED CONTENT
+// ========================================
+
+async function fetchTopRatedContent() {
+    const category = "Rating Tertinggi";
+    
+    // ✅ Prevent duplicate fetch
+    if (state.loadedCategories.has(category)) {
+        console.log(`✅ Category "${category}" already loaded`);
+        return;
+    }
+    
+    state.loadedCategories.add(category);
+    
+    try {
+        console.log(`📥 Fetching top rated content...`);
+        
+        // Fetch semua content
+        const contentRes = await fetch(
+            `${SUPABASE_URL}/rest/v1/content?select=id,title,description,type,images(image_url)`,
+            {
+                headers: {
+                    apikey: SUPABASE_KEY,
+                    Authorization: `Bearer ${SUPABASE_KEY}`
+                }
+            }
+        );
+        
+        if (!contentRes.ok) throw new Error(`HTTP ${contentRes.status}`);
+        
+        const allContent = await contentRes.json();
+        
+        if (!allContent || allContent.length === 0) {
+            console.log(`⚠️ No content found`);
+            state.loadedCategories.delete(category);
+            return;
+        }
+        
+        // Fetch ratings untuk semua content dan hitung rata-rata
+        const contentWithAvgRatings = await Promise.all(allContent.map(async item => {
+            try {
+                const ratingRes = await fetch(
+                    `${SUPABASE_URL}/rest/v1/rating?content_id=eq.${item.id}&select=rating`,
+                    {
+                        headers: {
+                            apikey: SUPABASE_KEY,
+                            Authorization: `Bearer ${SUPABASE_KEY}`
+                        }
+                    }
+                );
+                
+                const ratings = await ratingRes.json();
+                
+                if (ratings && ratings.length > 0) {
+                    const sum = ratings.reduce((acc, r) => acc + r.rating, 0);
+                    const avgRating = sum / ratings.length;
+                    
+                    return {
+                        ...item,
+                        avgRating: avgRating,
+                        ratingCount: ratings.length
+                    };
+                }
+                
+                return null; // Skip content tanpa rating
+                
+            } catch (error) {
+                console.error(`Error fetching rating for content ${item.id}:`, error);
+                return null;
+            }
+        }));
+        
+        // Filter content yang punya rating dan sort by rating tertinggi
+        const topRatedContent = contentWithAvgRatings
+            .filter(item => item !== null && item.avgRating !== undefined)
+            .sort((a, b) => b.avgRating - a.avgRating)
+            .slice(0, 10); // Ambil top 10 saja
+        
+        if (topRatedContent.length === 0) {
+            console.log(`⚠️ No rated content found`);
+            state.loadedCategories.delete(category);
+            return;
+        }
+        
+        console.log(`✅ Found ${topRatedContent.length} top rated content`);
+        
+        // Build cards
+        let fullCard = "";
+        topRatedContent.forEach(item => {
+            const img = item.images?.[0]?.image_url || SEMENTARAIMG;
+            const desc = item.description ?? "No description yet...";
+            const rating = item.avgRating.toFixed(1);
+            
+            fullCard += makeCard(item.id, SEMENTARAIMG, item.title, desc, rating);
+        });
+        
+        // Render di paling atas (sebelum kategori lain)
+        renderTopRatedCard(fullCard, category);
+        
+    } catch (error) {
+        console.error(`❌ Error fetching top rated content:`, error);
+        state.loadedCategories.delete(category);
+    }
+}
+
+// Fungsi khusus untuk render kategori "Rating Tertinggi" di paling atas
+function renderTopRatedCard(fullCard, category) {
+    const existingCategory = parent.querySelector(`[data-category="${category}"]`);
+    
+    if (existingCategory) {
+        console.warn(`⚠️ Category "${category}" already rendered, skipping...`);
+        return;
+    }
+    
+  const content = `<div class="content top-rated" data-category="${category}" style="
+    margin-top: 80px; 
+    margin-bottom: 50px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 140, 0, 0.05) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 20px;
+    padding :10px 20px 30px 10px;
+    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.2), 
+                0 0 60px rgba(255, 215, 0, 0.1) inset;
+    position: relative;
+    overflow: hidden;
+">
+    <!-- Decorative shine effect -->
+    <div style="
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, 
+            transparent 30%, 
+            rgba(255, 215, 0, 0.05) 50%, 
+            transparent 70%);
+        pointer-events: none;
+        animation: shine 3s infinite;
+    "></div>
+    
+    <!-- Decorative corner stars -->
+    <div style="
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 40px;
+        opacity: 0.3;
+        animation: pulse-star 2s ease-in-out infinite;
+    ">⭐</div>
+    
+    <div style="position: relative; z-index: 1; ">
+        <h1 style="
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            margin-bottom: 15px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        ">
+            <span style="font-size: 1.2em; animation: rotate-star 4s linear infinite;">⭐</span>
+            ${category}
+            <span style="
+                font-size: 0.4em;
+                background: rgba(255, 215, 0, 0.2);
+                padding: 5px 15px;
+                border-radius: 20px;
+                border: 1px solid rgba(255, 215, 0, 0.4);
+                -webkit-text-fill-color: #FFD700;
+                text-shadow: none;
+                letter-spacing: 0;
+                font-weight: 600;
+            ">TOP 10</span>
+        </h1>
+        
+        <p style="
+            font-size: 20px;
+            color: #bee3ff;
+            font-family: var(--font-default);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            line-height: 1.6;
+            margin-bottom: 25px;
+        ">
+            Deretan konten paling top di <span class="title" style="
+                background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                font-weight: 700;
+            ">RATINGKU</span> saat ini nih, konten kesukaan kamu ada ga ya? 🔥
+        </p>
+    </div>
+    
+    <div class="review-container" style="position: relative; z-index: 1; padding-left: 10px;">
+        ${fullCard}
+    </div>
+</div>
+
+<style>
+@keyframes shine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+@keyframes pulse-star {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 0.3;
+    }
+    50% { 
+        transform: scale(1.2);
+        opacity: 0.6;
+    }
+}
+
+@keyframes rotate-star {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Styling khusus untuk cards di dalam top-rated */
+.top-rated .review-card {
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.top-rated .review-card:hover {
+    border-color: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+    transform: translateY(-5px) scale(1.02);
+}
+
+.top-rated .review-card .rating {
+    color: #FFD700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    font-weight: 700;
+}
+</style>`;
+    
+    // Insert di paling awal (setelah search header jika ada)
+    const firstCategory = parent.querySelector('[data-category]');
+    if (firstCategory) {
+        firstCategory.insertAdjacentHTML('beforebegin', content);
+    } else {
+        parent.insertAdjacentHTML('beforeend', content);
+    }
+    
+    console.log(`✅ Rendered top rated category at the top`);
+}
 
 // ========================================
 // FETCH DATA
@@ -167,6 +424,8 @@ async function fetchData(category){
             const rating = item.avgRating ?? "?";
             
             fullCard += makeCard(item.id, SEMENTARAIMG, item.title, desc, rating);
+
+
         });
         
         // Render
@@ -230,6 +489,8 @@ async function initializeContent() {
         const types = [...new Set(rawTypes)];
         
         console.log(`📦 Found ${types.length} categories:`, types);
+
+        await fetchTopRatedContent();
         
         // Fetch all categories
         await Promise.all(types.map(type => fetchData(type)));

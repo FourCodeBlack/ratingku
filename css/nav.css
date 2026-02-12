@@ -6,7 +6,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 40px;  
+    padding: 0;  
     z-index: 999;
     backdrop-filter: blur(14px);
     font-family: var(--font-default);
@@ -14,6 +14,7 @@
 }
 
 .mainnavbar .logo{
+    padding-left: 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -118,7 +119,6 @@
     display: flex;
     margin-top: 100px;
     gap: 20px;
-    padding: 20px;
 }
 
 .sidebars{

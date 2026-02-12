@@ -4,16 +4,22 @@
   --duration-transition: 0.3s;
 }
 
-.layout {
-  display: flex;
+body::-webkit-scrollbar {
+  display: none;
 }
 
-.container{
-    width: calc(100% - 100px) !important;
+
+.container-explore{
+      display: flex;
+    margin : 100px auto;
+    gap: 20px;
+    width: 90%;
+    padding: 0px 50px 0px 50px;
+    position: relative;
+    align-items: center;
 }
 
 .content-container{
-    margin:0px 0px 0px 80px ;
     width: 100%;
     gap: 20px;
     display: flex;
@@ -169,7 +175,7 @@
   padding: 10px;
   transition: all var(--duration-transition) ease-in-out;
   transform: translateX(calc(-1 * var(--width-item)));
-  width: 110%;
+  width: 100%;
 }
 
 .review-card:hover .open {
@@ -193,4 +199,5 @@
   position: fixed;
   right: 0%;
   bottom: 0%;
+  z-index: 99;
 }
