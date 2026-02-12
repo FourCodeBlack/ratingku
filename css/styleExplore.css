@@ -186,3 +186,11 @@
   cursor: pointer;
   transition: all var(--duration-transition) ease;
 }
+
+
+.loading-gif{
+  width: 100px;
+  position: fixed;
+  right: 0%;
+  bottom: 0%;
+}

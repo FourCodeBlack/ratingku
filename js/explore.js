@@ -166,7 +166,7 @@ async function fetchData(category){
             const desc = item.description ?? "No description yet...";
             const rating = item.avgRating ?? "?";
             
-            fullCard += makeCard(item.id, img, item.title, desc, rating);
+            fullCard += makeCard(item.id, SEMENTARAIMG, item.title, desc, rating);
         });
         
         // Render
@@ -200,9 +200,11 @@ async function initializeContent() {
     try {
         console.log('🚀 Initializing content loader...');
         
-        // ✅ Clear existing content
+        // ✅ Clear existing content BUT keep search header
         if (parent) {
-            parent.innerHTML = '';
+            // Remove only category sections, not the search header
+            const categories = parent.querySelectorAll('[data-category]');
+            categories.forEach(cat => cat.remove());
         } else {
             console.error('❌ .content-container not found!');
             return;
@@ -254,7 +256,7 @@ async function initializeContent() {
         }
         
         if (parent) {
-            parent.innerHTML = '<div style="text-align: center; padding: 50px; color: #fff;">Failed to load content. Please refresh the page.</div>';
+            parent.insertAdjacentHTML('beforeend', '<div style="text-align: center; padding: 50px; color: #fff;">Failed to load content. Please refresh the page.</div>');
         }
         
         // Reset flags untuk allow retry

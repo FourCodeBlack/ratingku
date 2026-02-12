@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search - Explore</title>
+    <link rel="stylesheet" href="css/search.css">
+</head>
+<body>
+    <div class="search-wrapper">
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Cari judul, deskripsi, atau kategori..."
+                    autocomplete="off"
+                >
+                <button class="search-button" id="searchButton">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+                <button class="clear-button" id="clearButton" style="display: none;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="search-info" id="searchInfo"></div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div class="loading-search" id="loadingSearch" style="display: none;">
+            <div class="spinner"></div>
+            <p>Mencari...</p>
+        </div>
+
+        <!-- Content Container -->
+        <div class="content-container">
+            <!-- Search Results akan muncul di sini -->
+            <div class="search-results" id="searchResults" style="display: none;">
+                <h2 class="section-title">Hasil Pencarian</h2>
+                <div class="review-container" id="searchResultsContainer"></div>
+            </div>
+
+            <!-- All Content akan muncul di sini -->
+            <div class="all-content" id="allContent"></div>
+        </div>
+    </div>
+
+    <!-- Back to Explore Button -->
+    <a href="explore.html" class="back-to-explore">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Kembali ke Explore
+    </a>
+
+    <!-- Scripts -->
+    <script src="js/search.js"></script>
+</body>
+</html>

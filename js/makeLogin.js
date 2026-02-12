@@ -319,7 +319,7 @@ async function handleGoogleLogin() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: window.location.origin + "/ratingku/",
+        redirectTo: window.location.origin,
         queryParams: {
           access_type: "offline",
           prompt: "consent",

@@ -361,7 +361,7 @@ function renderPhotoProfiles(profiles) {
         
         label.innerHTML = `
             <input type="radio" name="avatar" value="${profile.id_pp}">
-            <img src="${profile.url}" alt="Avatar ${profile.id_pp}">
+            <img src="${profile.url}" alt="Avatar ${profile.id_pp} loading="lazy"">
         `;
         
         container.appendChild(label);
