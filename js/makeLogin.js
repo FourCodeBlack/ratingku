@@ -84,7 +84,7 @@ const loginModal = `
 // ========================================
 let authStateListener = null;
 let isSupabaseReady = false;
-let defaultAvatarUrl = null;
+let defaultAvatarUrl = 'https://aervhwynaxjyzqeiijca.supabase.co/storage/v1/object/public/photoprofile/BATMANPFP.webp';
 
 // ========================================
 // INJECT MODALS KE BODY
@@ -356,15 +356,19 @@ async function ensureUserProfile(user) {
         photo_profiles(url)
       `)
       .eq("id", user.id)
+      .single();
 
     if (!data) {
       console.log("Creating new profile");
 
       const username =
+      (
         user.user_metadata?.full_name ||
         user.user_metadata?.name ||
         user.email?.split("@")[0] ||
-        "User";
+        "User"
+      ).replace(/\s+/g, "");
+
 
       console.log("Attempting insert with:", { id: user.id, username, pp: 1 });
 

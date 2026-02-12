@@ -27,8 +27,35 @@
             <p id="userEmail" class="email">Loading...</p>
             
         </div>
-</div>
+    </div>
 
-    <script src="./js/test.js"></script>
+    <!-- Ratings Section -->
+    <div class="ratings-section">
+        <h2 class="section-title">Ratingmu</h2>
+        <div id="ratingsContainer" class="ratings-container">
+            <!-- Ratings will be loaded here -->
+            <div class="loading">Memuat rating...</div>
+        </div>
+    </div>
+
+    <div class="setting-container">
+        <div class="username-choose">
+            <h2>Ganti username</h2>
+            <input type="text" name="" id="" class="username-type" value="loading" spellcheck="false">
+            <h5>0/10</h5>
+        </div>
+        <div class="avatar-choose">
+            <h2>Ganti avatar</h2>
+            <div class="pp-chooser-grid">
+                <label class="pp-option">
+                    <input type="radio" name="avatar" value="1">
+                    <img src="SPIDERPFP.webp" alt="">
+                </label>
+            </div>
+            <button class="pp-confirm-button">Gunakan</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/profile.js"></script>
 </body>
 </html>

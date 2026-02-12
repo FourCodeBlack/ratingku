@@ -1,31 +1,23 @@
-
 .mainnavbar{
-    box-shadow: transparent;
     position: fixed;
-    z-index: 999;
-    flex-direction: row;
-    display: flex;
-    gap: 20px;
-    justify-content: space-between;
-    align-items: center;
     top: 0;
     width: 100%;
     height: 80px;
-    position: fixed;
-    overflow: hidden;
-    font-family: var(--font-default);
-    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;  
+    z-index: 999;
     backdrop-filter: blur(14px);
+    font-family: var(--font-default);
+
 }
+
 .mainnavbar .logo{
-    left: 20px;
     display: flex;
     flex-direction: row;
-    flex: 5;
     align-items: center;
-    justify-content: center-left;
-    gap:10px;
-    position: relative;
+    gap: 10px;
     color: white;
     font-family: var(--font-title);
     font-size: 24px;
@@ -33,20 +25,18 @@
 }
 
 .mainnavbar .logo img{
-    margin-right: 10px;
     width: 50px;
     height: 50px;
 }
 
 .mainnavbar ul {
     display: flex;
-    flex: 4;
+    align-items: center;
+    list-style: none;
+    gap: 12px; /* Kurangi gap dari 20px jadi 12px */
     margin: 0;
     padding: 0;
-    align-items: center;
-    overflow: hidden;
-    list-style-type: none;
-
+    padding-right: 105px; /* Tambahkan padding kanan agar tidak ketutup scrollbar */
 }
 
 .mainnavbar ul li a {
@@ -57,33 +47,30 @@
     text-decoration: none;
     background-color: var(--main-color);
     border-radius: 4px;
-
 }
-
 
 .mainnavbar ul .login {
     height: 40px; 
     width: fit-content;
-    padding: 10px;
+    padding: 10px 16px; /* Sesuaikan padding */
     white-space: nowrap;
     border: none;
     cursor: pointer;
     font-size: medium;
     font-weight: bold;
     font-family: var(--font-default);
-    color: white; /* Mengganti var background agar teks terlihat */
-    border-radius: 10px; /* 20% seringkali terlihat aneh, gunakan px untuk konsistensi */
+    color: white;
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 20px;
     background: linear-gradient(135deg, #6C4DFF, #5e02ff, rgb(10, 56, 194));
-    transition: all 0.4s ease; /* Transisi untuk semua perubahan */
+    transition: all 0.4s ease;
 }
 
 .mainnavbar ul .login:hover {
-    background: #b7a9ff; /* Mengganti gradient menjadi warna solid */
-    transform: scale(1.1); /* Efek membesar */
+    background: #b7a9ff;
+    transform: scale(1.05); /* Kurangi scale dari 1.1 jadi 1.05 */
 }
 
 .mainnavbar ul .premium {
@@ -108,7 +95,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 20px;
     transition: all 0.4s ease;
 }
 
@@ -117,16 +103,16 @@
     -webkit-background-clip: initial;
     background-clip: initial;
     color: white;
-    transform: scale(1.1);
+    transform: scale(1.05); /* Kurangi scale dari 1.1 jadi 1.05 */
     border-image: none;
     border: 2px solid #6C4DFF;
 }
+
 .mainnavbar ul .premium img{
     margin-left: 5px;
     width: 25px;
     height: 25px;
 }
-
 
 .container{
     display: flex;
@@ -134,9 +120,11 @@
     gap: 20px;
     padding: 20px;
 }
+
 .sidebars{
     flex: 1;
 }
+
 /* ===== SIDEBAR DASAR ===== */
 .sidebar {
     z-index: 998;
@@ -144,11 +132,11 @@
     top: 0;
     left: 0;
     width: 60px;
-    height:calc(100vh - 50px) ;
+    height: calc(100vh - 50px);
     display: flex;
     justify-content: space-between;
-    padding:100px 10px 20px 20px;
-    background:transparent;
+    padding: 100px 10px 20px 20px;
+    background: transparent;
     backdrop-filter: blur(14px);
     transition: width .4s ease;
     overflow: hidden;
@@ -177,60 +165,54 @@
 }
 
 /* Profile */
-
 .sidebar .left {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
 }
+
 .sidebar .left img {
-    
     width: 20px;
     height: 20px;
     border-radius: 50%;
     box-shadow: 0 0 25px rgba(108, 77, 255, .6);
     object-fit: cover;
-    /* GANTI 'animation' menjadi 'transition' */
-    /* Ini agar putaran dan pembesaran (scale) bergerak halus */
     transition: transform 0.3s ease; 
 }
 
 .sidebar .left img.hover-img {
    opacity: 0;
-   animation: trasform 0.3s ease;
-
+   transition: transform 0.3s ease;
 }
+
 .sidebar .left img.main-image {
     position: absolute;
-       animation: trasform 0.3s ease;
-   opacity: 1;
+    transition: transform 0.3s ease;
+    opacity: 1;
 }
 
-.sidebars :hover img.hover-img {
+.sidebars:hover img.hover-img {
    opacity: 1;
    transform: rotate(360deg);
 }
-.sidebars :hover img.main-image {
+
+.sidebars:hover img.main-image {
    opacity: 0;
    transform: rotate(360deg);
 }
 
-
-
 .sidebar .left button.home {
     width: 48px;
     height: 48px;
-
-    border: 2px solid rgb(255, 217, 0); /* Border harus transparan */
-    
+    border: 2px solid rgb(255, 217, 0);
     background-image: 
-        linear-gradient(transparent), /* Lapisan dalam (warna background tombol) */
-        linear-gradient(135deg, #383838, #1a1a1a); /* Lapisan luar (warna border) */
+        linear-gradient(transparent),
+        linear-gradient(135deg, #383838, #1a1a1a);
     cursor: pointer;
     color: #fff;
     box-shadow: 0 10px 30px rgba(0,229,255,.4);
-     border-radius: 14px;
+    border-radius: 14px;
     display: flex;
     justify-content: center; 
     align-items: center;     
@@ -238,18 +220,17 @@
 }
 
 .sidebar .left button.home img {
-  
     width: 34px; 
     height: 34px;
     object-fit: contain;
 }
+
 .sidebar .left button.setting {
     width: 48px;
     height: 48px;
     border-radius: 14px;
     border: none;
-     background: rgba(11, 15, 43, 0.75);
-    border-radius: 20%;
+    background: rgba(11, 15, 43, 0.75);
     cursor: pointer;
     color: transparent;
     display: flex;
@@ -264,15 +245,14 @@
     object-fit: contain;
 }
 
-
 /* ===== BAGIAN KANAN ===== */
 .sidebar .right {
     display: flex;
     align-items: center;
 }
+
 .sidebar .right .button-container {
     display: flex;
-    
     flex-direction: column;
     align-items: left;
     justify-content: flex-start;
@@ -286,6 +266,7 @@
     display: flex;
     flex-direction: column;
 }
+
 /* Tombol menu */
 .sidebar div.button-container nav.button-row-1 button {
     width: 100%;
@@ -304,11 +285,11 @@
 
 .sidebar div.button-container nav.button-row-2 button{
     width: 100%;
-      display: flex;
+    display: flex;
     margin-bottom: 20px;
     padding: 14px;
     border-radius: 16px;
-    background:transparent;
+    background: transparent;
     border: 1px solid rgba(108,77,255,.35);
     color: #fff;
     cursor: pointer;
@@ -330,12 +311,9 @@
     transform: translateX(6px);
 }
 
-
-
 /* Hover menu */
 .sidebar nav.button button:hover {
     background: linear-gradient(135deg, #6C4DFF, #00E5FF);
     box-shadow: 0 0 30px rgba(0,229,255,.6);
     transform: translateX(6px);
 }
-

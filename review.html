@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Ratings - Ratingku</title>
+    <link rel="stylesheet" href="css/review.css" />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+      <p>Loading ratings...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+      <!-- Header -->
+      <header class="page-header">
+        <div class="header-content">
+          <div class="header-left">
+            <i class="fas fa-star header-icon"></i>
+            <div>
+              <h1>All Ratings</h1>
+              <p class="header-subtitle">Lihat semua rating dari komunitas</p>
+              <button class="button-back">
+                <a href="index.html">← Back</a>
+              </button>
+            </div>
+          </div>
+          <div class="header-right">
+            <div class="stats-card">
+              <div class="stat-item">
+                <i class="fas fa-users"></i>
+                <div>
+                  <span class="stat-value" id="totalUsers">0</span>
+                  <span class="stat-label">Users</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <i class="fas fa-star"></i>
+                <div>
+                  <span class="stat-value" id="totalRatings">0</span>
+                  <span class="stat-label">Ratings</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <i class="fas fa-chart-line"></i>
+                <div>
+                  <span class="stat-value" id="avgRating">0</span>
+                  <span class="stat-label">Avg Rating</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Filter & Search Section -->
+      <div class="filter-section">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Cari user atau konten..."
+          />
+        </div>
+        <div class="filter-controls">
+          <select id="sortFilter" class="filter-select">
+            <option value="recent">Terbaru</option>
+            <option value="oldest">Terlama</option>
+            <option value="highest">Rating Tertinggi</option>
+            <option value="lowest">Rating Terendah</option>
+            <option value="most-active">User Teraktif</option>
+          </select>
+          <select id="ratingFilter" class="filter-select">
+            <option value="all">Semua Rating</option>
+            <option value="5">★★★★★ (5)</option>
+            <option value="4">★★★★☆ (4)</option>
+            <option value="3">★★★☆☆ (3)</option>
+            <option value="2">★★☆☆☆ (2)</option>
+            <option value="1">★☆☆☆☆ (1)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="content-grid">
+        <!-- Left Panel - User List -->
+        <div class="users-panel">
+          <div class="panel-header">
+            <h2><i class="fas fa-users"></i> Active Users</h2>
+            <span class="user-count" id="userCount">0 users</span>
+          </div>
+          <div class="users-list" id="usersList">
+            <!-- Users will be inserted here dynamically -->
+          </div>
+        </div>
+
+        <!-- Right Panel - Ratings Display -->
+        <div class="ratings-panel">
+          <div class="panel-header">
+            <h2><i class="fas fa-star"></i> All Ratings</h2>
+            <button class="btn-refresh" id="btnRefresh">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+          </div>
+          <div class="ratings-container" id="ratingsContainer">
+            <!-- Ratings will be inserted here dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal - User Detail -->
+    <div class="modal" id="userModal">
+      <div class="modal-overlay" id="modalOverlay"></div>
+      <div class="modal-content">
+        <button class="modal-close" id="modalClose">
+          <i class="fas fa-times"></i>
+        </button>
+
+        <div class="modal-header">
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="user-info">
+            <h2 id="modalUserName">User Name</h2>
+            <p class="user-stats">
+              <span id="modalUserRatings">0 ratings</span> •
+              <span id="modalUserAvgRating">0.0 avg</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <h3><i class="fas fa-list"></i> Rated Content</h3>
+          <div class="user-ratings-list" id="userRatingsList">
+            <!-- User's ratings will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <i class="fas fa-info-circle"></i>
+      <span id="toastMessage"></span>
+    </div>
+
+    <script type="module" src="js/review.js"></script>
+  </body>
+</html>

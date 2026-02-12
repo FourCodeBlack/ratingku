@@ -26,7 +26,7 @@
   display: flex;
   align-items: center;
   padding: 50px;
-  min-height: 320px;
+  height: 40vh;
   border-radius: 24px;
   backdrop-filter: blur(100px);
 }
@@ -62,15 +62,6 @@
   margin: 0 0 20px;
 }
 
-/* SLIDER KANAN */
-.horizontal-slider {
-  flex: 1;
-  max-width: 560px;
-  height: 320px;
-  overflow: hidden;
-  border-radius: 22px;
-  position: relative;
-}
 
 .section-move {
   display: flex;
@@ -118,13 +109,6 @@ height: fit-content;
     text-align: center;
 }
 
-.slider-track {
-  display: flex;
-  gap: 20px;
-  width: max-content;
-  animation: slideHorizontal 25s linear infinite;
-}
-
 .slider-track img {
   width: 220px;
   height: 320px;
@@ -138,27 +122,6 @@ height: fit-content;
   transform: scale(1.06);
 }
 
-/* GRADIENT TEPI */
-.horizontal-slider::before,
-.horizontal-slider::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 70px;
-  height: 100%;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.horizontal-slider::before {
-  left: 0;
-  background: linear-gradient(to right, rgba(30, 10, 80, 1), transparent);
-}
-
-.horizontal-slider::after {
-  right: 0;
-  background: linear-gradient(to left, rgba(30, 10, 80, 1), transparent);
-}
 
 /* ANIMASI */
 @keyframes slideHorizontal {
@@ -175,17 +138,6 @@ height: fit-content;
   .content-container-child {
     flex-direction: column;
     gap: 40px;
-  }
-
-  .horizontal-slider {
-    width: 100%;
-    max-width: 100%;
-    height: 260px;
-  }
-
-  .slider-track img {
-    width: 180px;
-    height: 260px;
   }
 }
 

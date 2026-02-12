@@ -18,25 +18,25 @@ function setupBackButton() {
         
         // Cek dari mana user datang
         if (referrer) {
-            if (referrer.includes('index.php') || referrer.includes('index.html')) {
-                window.location.href = 'index.php';
-            } else if (referrer.includes('explore.php') || referrer.includes('explore.html')) {
-                window.location.href = 'explore.php';
-            } else if (referrer.includes('myReview.php') || referrer.includes('myReview.html')) {
-                window.location.href = 'myReview.php';
-            } else if (referrer.includes('detail.php') || referrer.includes('detail.html')) {
-                window.location.href = 'detail.php';
+            if (referrer.includes('index.html') || referrer.includes('index.html')) {
+                window.location.href = 'index.html';
+            } else if (referrer.includes('explore.html') || referrer.includes('explore.html')) {
+                window.location.href = 'explore.html';
+            } else if (referrer.includes('myReview.html') || referrer.includes('myReview.html')) {
+                window.location.href = 'myReview.html';
+            } else if (referrer.includes('detail.html') || referrer.includes('detail.html')) {
+                window.location.href = 'detail.html';
             } else {
                 // Fallback ke history back jika ada
                 if (window.history.length > 1) {
                     window.history.back();
                 } else {
-                    window.location.href = 'index.php';
+                    window.location.href = 'index.html';
                 }
             }
         } else {
             // Default ke index jika tidak ada referrer
-            window.location.href = 'index.php';
+            window.location.href = 'index.html';
         }
     });
 }
@@ -52,7 +52,7 @@ async function getCurrentUser() {
         
         if (!session) {
             // Redirect to login if not authenticated
-            window.location.href = 'index.php';
+            window.location.href = 'index.html';
             return null;
         }
         
@@ -244,6 +244,46 @@ function updateUI(user, profile) {
 }
 
 // ========================================
+// TOGGLE SETTING MENU
+// ========================================
+function setupSettingToggle() {
+    const review_menu = document.querySelector(".ratings-section");
+    const setting_menu = document.querySelector(".setting-container");
+    const setting_button = document.querySelector(".edit-button");
+
+    console.log('Setup toggle - Review menu:', review_menu);
+    console.log('Setup toggle - Setting menu:', setting_menu);
+    console.log('Setup toggle - Setting button:', setting_button);
+
+    if (!setting_button || !review_menu || !setting_menu) {
+        console.error('Setting toggle elements not found');
+        return;
+    }
+
+    // Set default: tampilkan review, sembunyikan setting
+    review_menu.classList.add('active');
+    setting_menu.classList.remove('active');
+
+    // Event listener untuk tombol setting
+    setting_button.addEventListener('click', () => {
+        console.log('Button clicked!');
+        console.log('Setting menu has active?', setting_menu.classList.contains('active'));
+        
+        if (setting_menu.classList.contains('active')) {
+            // Tutup setting, buka review
+            setting_menu.classList.remove('active');
+            review_menu.classList.add('active');
+            console.log('Switching to review');
+        } else {
+            // Buka setting, tutup review
+            setting_menu.classList.add('active');
+            review_menu.classList.remove('active');
+            console.log('Switching to setting');
+        }
+    });
+}
+
+// ========================================
 // INITIALIZE PAGE
 // ========================================
 async function initPage() {
@@ -265,6 +305,9 @@ async function initPage() {
         const ratings = await loadUserRatings(user.id);
         renderRatings(ratings, username, avatarURL);
         
+        // Setup setting toggle SETELAH semua elemen di-render
+        setupSettingToggle();
+        
     } catch (error) {
         console.error('Error initializing page:', error);
         document.getElementById('ratingsContainer').innerHTML = `
@@ -277,6 +320,166 @@ async function initPage() {
 }
 
 // ========================================
+// LOAD PHOTO PROFILES
+// ========================================
+async function loadPhotoProfiles() {
+    try {
+        const { data, error } = await supabase
+            .from('photo_profiles')
+            .select('id_pp, url')
+            .order('id_pp', { ascending: true });
+        
+        if (error) {
+            console.error('Error loading photo profiles:', error);
+            return;
+        }
+        
+        console.log('Photo profiles loaded:', data);
+        renderPhotoProfiles(data);
+        
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Function untuk render photo profiles ke HTML
+function renderPhotoProfiles(profiles) {
+    const container = document.querySelector('.pp-chooser-grid');
+    
+    if (!container) {
+        console.error('Container .pp-chooser-grid tidak ditemukan');
+        return;
+    }
+    
+    // Clear existing content
+    container.innerHTML = '';
+    
+    // Render setiap profile
+    profiles.forEach(profile => {
+        const label = document.createElement('label');
+        label.className = 'pp-option';
+        
+        label.innerHTML = `
+            <input type="radio" name="avatar" value="${profile.id_pp}">
+            <img src="${profile.url}" alt="Avatar ${profile.id_pp}">
+        `;
+        
+        container.appendChild(label);
+    });
+}
+
+// ========================================
 // START
 // ========================================
-document.addEventListener('DOMContentLoaded', initPage);
+document.addEventListener('DOMContentLoaded', async() => {
+    // Initialize page first
+    await initPage();
+    
+    // Load photo profiles
+    await loadPhotoProfiles();
+
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    const {data, error} = await supabase
+        .from('profiles')
+        .select('username, pp')
+        .eq('id', user.id)
+        .single();
+
+    if (error) {
+        console.error('Error:', error);
+        return;
+    }
+    
+    console.log('Profile data:', data);
+
+    const pfp_radio = document.querySelectorAll('input[name="avatar"]');
+    const username_input = document.querySelector('.username-type');
+    const username = document.querySelector('.username');
+    const confirm_button = document.querySelector('.pp-confirm-button');
+
+    if (!username_input || !confirm_button) {
+        console.log('Setting elements not found');
+        return;
+    }
+
+    const localUsername = data.username;
+    const alphanumeric = /^[a-zA-Z0-9_-]*$/;
+
+    username.textContent = localUsername;
+    username_input.value = localUsername;
+    
+    const username_old = username_input.value;
+    let pfpChange = false;
+    let selectedAvatar = data.pp;
+
+    pfp_radio.forEach(radio => {
+        if (radio.value == data.pp) {
+            radio.checked = true;
+        }
+    });
+
+    pfp_radio.forEach(radio => {
+        radio.addEventListener('change', () => {
+            selectedAvatar = radio.value;
+            pfpChange = true;
+            confirm_button.classList.add('active');
+        });
+    });
+
+    username_input.addEventListener('input', () => {
+        if (username_old != username_input.value || pfpChange == true) {
+            confirm_button.classList.add('active');
+        } else {
+            confirm_button.classList.remove('active');
+        }
+    });
+
+    confirm_button.addEventListener('click', async () => {
+        if (!confirm_button.classList.contains('active')) return;
+        
+        const new_username = username_input.value.trim();
+        
+        if (!new_username) {
+            alert('Username tidak boleh kosong');
+            return;
+        }
+        
+        if (!alphanumeric.test(new_username)) {
+            alert('Username hanya boleh mengandung huruf, angka, underscore, dan dash');
+            return;
+        }
+
+        if (new_username.length < 3) {
+            alert('Username minimal 3 karakter');
+            return;
+        }
+
+        try {
+            const updateData = {
+                username: new_username,
+                pp: selectedAvatar
+            };
+
+            const { data, error } = await supabase
+                .from('profiles')
+                .update(updateData)
+                .eq('id', user.id)
+                .select();
+            
+            if (error) {
+                console.error('Error updating:', error);
+                alert('Gagal memperbarui profil: ' + error.message);
+                return;
+            }
+            
+            console.log('Update berhasil:', data);
+            window.location.reload();
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+        }
+    });
+});

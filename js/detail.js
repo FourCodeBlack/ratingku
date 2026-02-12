@@ -21,7 +21,7 @@ async function init() {
     if (!session) {
         // User not logged in - redirect to home with login modal
         alert('Silakan login terlebih dahulu untuk melihat detail konten.');
-        window.location.href = 'explore.php';
+        window.location.href = 'explore.html';
         return;
     }
     
@@ -30,7 +30,7 @@ async function init() {
     // 2. Load content detail
     if (!contentId) {
         alert('Content ID tidak ditemukan');
-        window.location.href = 'explore.php';
+        window.location.href = 'explore.html';
         return;
     }
     
@@ -97,12 +97,56 @@ async function displayUserInfo() {
     const userAvatar = document.getElementById('userAvatar');
     const userName = document.getElementById('userName');
     
-    // Get display name from email
-    const displayName = currentUser.email.split('@')[0];
-    const initial = displayName.charAt(0).toUpperCase();
-    
-    userAvatar.textContent = initial;
-    userName.textContent = displayName;
+    try {
+        // Ambil data profile dari database
+        const { data, error } = await supabase
+            .from("profiles")
+            .select('username, photo_profiles(url)')
+            .eq("id", currentUser.id)
+            .single();
+        
+        if (error) throw error;
+        
+        console.log('Profile data:', data);
+        
+        // Set username
+        const displayName = data?.username || currentUser.email.split('@')[0];
+        userName.textContent = displayName;
+        
+        // Set avatar
+        if (data?.photo_profiles?.url) {
+            // Jika ada foto profil dari database
+            userAvatar.style.backgroundImage = `url(${data.photo_profiles.url})`;
+            userAvatar.style.backgroundSize = 'cover';
+            userAvatar.style.backgroundPosition = 'center';
+        } else {
+            // Fallback ke initial jika tidak ada foto
+            const initial = displayName.charAt(0).toUpperCase();
+            userAvatar.style.backgroundImage = 'none';
+            userAvatar.textContent = initial;
+            userAvatar.style.display = 'flex';
+            userAvatar.style.alignItems = 'center';
+            userAvatar.style.justifyContent = 'center';
+            userAvatar.style.fontSize = '1.2rem';
+            userAvatar.style.fontWeight = 'bold';
+        }
+        
+    } catch (error) {
+        console.error('Error loading profile:', error);
+        
+        // Fallback jika ada error
+        const displayName = currentUser.email.split('@')[0];
+        const initial = displayName.charAt(0).toUpperCase();
+        
+        userName.textContent = displayName;
+        userAvatar.style.backgroundImage = 'none';
+        userAvatar.textContent = initial;
+        userAvatar.style.display = 'flex';
+        userAvatar.style.alignItems = 'center';
+        userAvatar.style.justifyContent = 'center';
+        userAvatar.style.fontSize = '1.2rem';
+        userAvatar.style.fontWeight = 'bold';
+    }
 }
 
 // ========================================

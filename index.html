@@ -35,10 +35,9 @@
                 <h1 class="title shine-effect">RATINGKU</h1>
             </div>
             <ul>
-                <li><a href="profile.php">Profile</a></li>
-                <li><a href="myReview.php">Your Review</a></li>
-                <li class=" kategori"><a href="">Categories</a></li>
-                <li><a href="search.php">Search</a></li>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="review.html">Your Review</a></li>
                 <button class="login"> Login </button>
                 <script type="module" src="js/makeLogin.js"></script>
                 <button class="premium">Premium
@@ -102,10 +101,6 @@
                     </div>
                 </aside>
             </div>
-            <!--              
-             <div class="background-slider no-copy" id="backgroundSlider"></div>
-             <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> -->
-
             <script src="js/imageslider.js" defer></script>
 
 
@@ -120,26 +115,10 @@
                                 Temukan film & anime terbaik berdasarkan rating komunitas
                             </p>
 
-                            <div class="create-review-button" onclick="location.href='explore.php'">
+                            <div class="create-review-button" onclick="location.href='explore.html'">
                                 <span>Explore</span>
                                 <img src="img/right-arrow.png" width="10">
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- IMAGE SLIDER -->
-                    <div class="horizontal-slider">
-                        <div class="slider-track">
-                            <img src="img/slide1.jpg">
-                            <img src="img/slide2.jpg">
-                            <img src="img/slide3.jpg">
-                            <img src="img/slide4.jpg">
-                            <img src="img/slide5.jpg">
-
-                            <!-- duplikat untuk loop halus -->
-                            <img src="img/slide1.jpg">
-                            <img src="img/slide2.jpg">
-                            <img src="img/slide3.jpg">
                         </div>
                     </div>
 
@@ -149,11 +128,13 @@
                     <p>Jelajahi Ratingku dengan 1 klik!!!</p>
                 </div>
                 <div class="section-move">
-                    <button class="best-anime shine-effect" style="--duration: 0.2" onclick="location.href='#info-slider'" id="button-section-info">
+                    <button class="best-anime shine-effect" style="--duration: 0.2"
+                        onclick="location.href='#info-slider'" id="button-section-info">
                         <img class="web-information-image" src="img/star.png" width="15px" height="15px">
                         <span class="span-web-information">Web Information</span>
                     </button>
-                    <button class="best-anime shine-effect" style="--duration: 0.2" onclick="location.href='#section-film'" id="button-section-film">
+                    <button class="best-anime shine-effect" style="--duration: 0.2"
+                        onclick="location.href='#section-film'" id="button-section-film">
                         <img class="best-film-image" src="img/star.png" width="15px" height="15px">
                         <span class="-span-best-film">Best Film</span>
                     </button>
@@ -163,98 +144,98 @@
                         <span class="-span-best-anime">Best Anime</span>
                     </button>
                 </div>
-  <div class="container-cards">
-        <!-- Card Kiri - Informasi Web -->
-        <div class="card card-left">
-            <div>
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <span class="icon">⭐</span>
-                        Tentang Platform
-                    </h2>
-                    <p class="card-subtitle">Sistem rating dan review terpercaya</p>
-                    <span class="badge">Verified Platform</span>
-                </div>
+                <div class="container-cards">
+                    <!-- Card Kiri - Informasi Web -->
+                    <div class="card card-left">
+                        <div>
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <span class="icon">⭐</span>
+                                    Tentang Platform
+                                </h2>
+                                <p class="card-subtitle">Sistem rating dan review terpercaya</p>
+                                <span class="badge">Verified Platform</span>
+                            </div>
 
-                <ul class="info-list">
-                    <li class="info-item">
-                        <span class="bullet"></span>
-                        Rating berbasis komunitas yang fair dan transparan
-                    </li>
-                    <li class="info-item">
-                        <span class="bullet"></span>
-                        Verifikasi otomatis untuk mencegah spam
-                    </li>
-                    <li class="info-item">
-                        <span class="bullet"></span>
-                        Analitik mendalam untuk setiap review
-                    </li>
-                    <li class="info-item">
-                        <span class="bullet"></span>
-                        Update real-time dan notifikasi instant
-                    </li>
-                </ul>
+                            <ul class="info-list">
+                                <li class="info-item">
+                                    <span class="bullet"></span>
+                                    Rating berbasis komunitas yang fair dan transparan
+                                </li>
+                                <li class="info-item">
+                                    <span class="bullet"></span>
+                                    Verifikasi otomatis untuk mencegah spam
+                                </li>
+                                <li class="info-item">
+                                    <span class="bullet"></span>
+                                    Analitik mendalam untuk setiap review
+                                </li>
+                                <li class="info-item">
+                                    <span class="bullet"></span>
+                                    Update real-time dan notifikasi instant
+                                </li>
+                            </ul>
 
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <span class="stat-value">15K+</span>
-                        <p class="stat-label">Total Reviews</p>
+                            <div class="stats-grid">
+                                <div class="stat-box">
+                                    <span class="stat-value">15K+</span>
+                                    <p class="stat-label">Total Reviews</p>
+                                </div>
+                                <div class="stat-box">
+                                    <span class="stat-value">4.8</span>
+                                    <p class="stat-label">Avg Rating</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="#profile" class="btn-profile">
+                            Lihat Profile Lengkap
+                            <span class="arrow">→</span>
+                        </a>
                     </div>
-                    <div class="stat-box">
-                        <span class="stat-value">4.8</span>
-                        <p class="stat-label">Avg Rating</p>
+
+                    <!-- Card Kanan - Fitur & Profile -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <span class="icon">🚀</span>
+                                Fitur Unggulan
+                            </h2>
+                            <p class="card-subtitle">Kemudahan yang kami tawarkan</p>
+                        </div>
+
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <strong>Smart Filtering</strong><br>
+                                Filter review berdasarkan kategori, rating, dan tanggal dengan algoritma cerdas
+                            </div>
+                            <div class="feature-item">
+                                <strong>AI-Powered Insights</strong><br>
+                                Analisis sentimen otomatis dan rekomendasi berbasis machine learning
+                            </div>
+                            <div class="feature-item">
+                                <strong>Multi-Platform Sync</strong><br>
+                                Sinkronisasi data across device dengan cloud storage terintegrasi
+                            </div>
+                            <div class="feature-item">
+                                <strong>Advanced Security</strong><br>
+                                Enkripsi end-to-end dan perlindungan data privasi pengguna
+                            </div>
+                        </div>
+
+                        <a href="#dashboard" class="btn-profile">
+                            Akses Dashboard
+                            <span class="arrow">→</span>
+                        </a>
                     </div>
                 </div>
-            </div>
-
-            <a href="#profile" class="btn-profile">
-                Lihat Profile Lengkap
-                <span class="arrow">→</span>
-            </a>
-        </div>
-
-        <!-- Card Kanan - Fitur & Profile -->
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">
-                    <span class="icon">🚀</span>
-                    Fitur Unggulan
-                </h2>
-                <p class="card-subtitle">Kemudahan yang kami tawarkan</p>
-            </div>
-
-            <div class="feature-list">
-                <div class="feature-item">
-                    <strong>Smart Filtering</strong><br>
-                    Filter review berdasarkan kategori, rating, dan tanggal dengan algoritma cerdas
-                </div>
-                <div class="feature-item">
-                    <strong>AI-Powered Insights</strong><br>
-                    Analisis sentimen otomatis dan rekomendasi berbasis machine learning
-                </div>
-                <div class="feature-item">
-                    <strong>Multi-Platform Sync</strong><br>
-                    Sinkronisasi data across device dengan cloud storage terintegrasi
-                </div>
-                <div class="feature-item">
-                    <strong>Advanced Security</strong><br>
-                    Enkripsi end-to-end dan perlindungan data privasi pengguna
-                </div>
-            </div>
-
-            <a href="#dashboard" class="btn-profile">
-                Akses Dashboard
-                <span class="arrow">→</span>
-            </a>
-        </div>
-    </div>
 
             </section>
         </div>
 
 
     </div>
- 
+
     <div class="container-music-slider">
         <link rel="stylesheet" href="css/homepage_section.css">
 
@@ -370,16 +351,15 @@
                 <div class="footer-brand">
                     <div class="footer-logo">
                         <div class="logo-icon">🚀</div>
-                        <span class="logo-text">NamaBrand</span>
+                        <span class="logo-text">Ratingku</span>
                     </div>
                     <p class="footer-description">
-                        Deskripsi singkat tentang perusahaan atau website Anda. Jelaskan value proposition dan apa yang
-                        membuat Anda berbeda dari kompetitor.
+                        Ratingku adalah platform untuk memberi rating dan ulasan pada berbagai hiburan seperti film, animasi, game, musik, dan komik. Temukan rekomendasi terbaik berdasarkan penilaian pengguna, bagikan pendapatmu, dan jelajahi karya-karya favorit dari berbagai genre dalam satu tempat. Ratingku membantu kamu menemukan tontonan dan hiburan yang sesuai dengan selera kamu dengan lebih mudah dan menyenangkan.
                     </p>
                     <div class="footer-contact">
                         <div class="footer-contact-item">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span>Jl. Contoh No. 123, Jakarta, Indonesia</span>
+                            <span>Jl. Pahlawan No. 123, Jakarta, Indonesia</span>
                         </div>
                         <div class="footer-contact-item">
                             <i class="fas fa-phone"></i>
@@ -387,7 +367,7 @@
                         </div>
                         <div class="footer-contact-item">
                             <i class="fas fa-envelope"></i>
-                            <span>info@namabrand.com</span>
+                            <span>ratingku67@gmail.com</span>
                         </div>
                     </div>
                 </div>
@@ -446,7 +426,7 @@
             <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <p class="footer-copyright">
-                    © 2024 <strong>NamaBrand</strong>. All rights reserved.
+                    © 2026 <strong>Ratingku</strong>. All rights reserved.
                 </p>
                 <div class="footer-bottom-links">
                     <a href="#privasi">Kebijakan Privasi</a>

@@ -166,7 +166,7 @@ async function fetchData(category){
             const desc = item.description ?? "No description yet...";
             const rating = item.avgRating ?? "?";
             
-            fullCard += makeCard(item.id, SEMENTARAIMG, item.title, desc, rating);
+            fullCard += makeCard(item.id, img, item.title, desc, rating);
         });
         
         // Render
@@ -281,7 +281,7 @@ if (document.readyState === 'loading') {
 // ========================================
 
 window.goToDetail = function(contentId) {
-    window.location.href = `detail.php?id=${contentId}`;
+    window.location.href = `detail.html?id=${contentId}`;
 };
 
 // ========================================
