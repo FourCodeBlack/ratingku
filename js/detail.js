@@ -210,7 +210,7 @@ async function loadRatings() {
             .from('rating')
             .select(`
                 *,
-                users:user_id(username)
+                users:user_id(username,photo_profiles(url))
             `)
             .eq('content_id', contentId)
             .order('created_at', { ascending: false });
@@ -255,8 +255,9 @@ async function displayReviews(ratings) {
         // ✅ Akses dari relasi users
         const email = rating.users?.username || 'Unknown User';
         const displayName = email.split('@')[0];
-        const initial = data.photo_profiles.url;
+        const initial = rating.users.photo_profiles.url;
         console.log(data.photo_profiles.url);
+        console.log(rating)
 
         const date = formatDate(rating.created_at);
         const isOwnReview = rating.user_id === currentUser.id;
