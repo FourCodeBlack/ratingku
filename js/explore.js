@@ -676,5 +676,6 @@ async function getTrending(category) {
     } catch (err) {
         console.error(err);
         msgBox.error("ERROR TMDB");
+        alert(err)
     }
 }
