@@ -1010,7 +1010,7 @@
       // Daftar gratis: https://console.groq.com/keys
       // ─────────────────────────────────────────
       const DEFAULT_API_KEY =
-        "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";
+        "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";
       const GROQ_MODEL = "llama-3.3-70b-versatile";
       const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
 
@@ -1045,7 +1045,7 @@ Kepribadian: ramah, jelas, antusias, sedikit humoris. Jawab dalam bahasa yang sa
 
       function checkApiKey() {
         const key = getApiKey();
-        const isDefault = !key || key === "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";
+        const isDefault = !key || key === "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";
         document
           .getElementById("apiBanner")
           .classList.toggle("show", isDefault);
@@ -1096,7 +1096,7 @@ Kepribadian: ramah, jelas, antusias, sedikit humoris. Jawab dalam bahasa yang sa
 
         try {
           const key = getApiKey();
-          if (!key || key === "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")
+          if (!key || key === "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")
             throw new Error("NO_KEY");
 
           const res = await fetch(GROQ_ENDPOINT, {
