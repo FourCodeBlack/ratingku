@@ -1045,7 +1045,7 @@ Kepribadian: ramah, jelas, antusias, sedikit humoris. Jawab dalam bahasa yang sa
 
       function checkApiKey() {
         const key = getApiKey();
-        const isDefault = !key || key === "xai-2lktyjQbQjU22Ne7AusTDfXrMtwjs99P7HWYYHM68xCkqM1lzxYDNXgbB5HGOtRQVmzAzVNBmGrfOkyf";
+        const isDefault = !key || key === "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";
         document
           .getElementById("apiBanner")
           .classList.toggle("show", isDefault);
@@ -1096,7 +1096,7 @@ Kepribadian: ramah, jelas, antusias, sedikit humoris. Jawab dalam bahasa yang sa
 
         try {
           const key = getApiKey();
-          if (!key || key === "xai-2lktyjQbQjU22Ne7AusTDfXrMtwjs99P7HWYYHM68xCkqM1lzxYDNXgbB5HGOtRQVmzAzVNBmGrfOkyf")
+          if (!key || key === "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")
             throw new Error("NO_KEY");
 
           const res = await fetch(GROQ_ENDPOINT, {
